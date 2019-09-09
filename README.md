@@ -13,7 +13,7 @@ Rujin Wang <rujin@email.unc.edu>
 ## Installation
 ```r
 install.packages('devtools')
-
+devtools::install_github("rujinwang/WGSmapp")
 devtools::install_github("rujinwang/SCOPE")
 ```
 
