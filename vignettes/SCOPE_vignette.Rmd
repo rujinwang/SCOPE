@@ -43,23 +43,6 @@ across samples to estimate the bias terms.
 to identify breakpoints that are shared across cells 
 from the same genetic background
 
-```{r, out.width = "200px", fig.align = "center", echo=FALSE}
-knitr::include_graphics(
-    "/Users/rujin/Dropbox/writing/SCOPE_Git/Figures/Figure1_SCOPE_outline.jpg")
-```
-
-**Figure 1**. A flowchart outlining the procedures for 
-profiling single-cell CNV. The first step is bioinformatic 
-pre-processing pipeline. Assembled BAM files are finally 
-required. The second step is calculation of GC content, 
-mappability and read depth using Rsamtools with QC 
-measurements. An EM embedded normalization procedure 
-is then applied to single cells to remove biases and 
-artifacts along the whole genome. The cross-sample 
-Poisson likelihood segmentation is performed to call 
-CNVs, which can be further used to infer single-cell 
-clusters or clones.
-
 
 ## 1.2 Bioinformatic pre-processing
 
@@ -348,11 +331,6 @@ choiceofT(Y_qc = Y_sim, gc_qc = ref_sim$gc, norm_index = which(Gini<=0.12),
             filename = "choiceofTdemo.pdf")
 ```
 
-```{r, out.width = "500px", include=TRUE, fig.align="center", echo=FALSE}
-knitr::include_graphics(
-    "/Users/rujin/Dropbox/writing/SCOPE_Git/Figures/demo_EM_fitting.png")
-```
-
 ## 3.3 Cross-sample segmentation by SCOPE
 
 SCOPE provides the cross-sample segmentation, 
@@ -383,20 +361,4 @@ SCOPE offers heatmap of inferred integer copy-number
 profiles with cells clustered by hierarchical clustering.
 ```{r, eval=FALSE}
 iCNplot(iCNmat = iCN_sim, ref = ref_sim, Gini = Gini, filename = "iCNplotdemo")
-```
-
-We demonstrate SCOPE on scDNA-seq data of two breast 
-cancer patients (T10 and T16) from [Navin et al. 2011 Nature](
-https://www.nature.com/articles/nature09807). 
-Figures below give heatmaps of genome-wide estimated 
-integer copy numbers across all cells from T10 and T16. 
-
-```{r, out.width = "800px", include=TRUE, fig.align="center", echo=FALSE}
-knitr::include_graphics(
-    "/Users/rujin/Dropbox/writing/SCOPE_Git/Figures/T10.png")
-```
-
-```{r, out.width = "800px", include=TRUE, fig.align="center", echo=FALSE}
-knitr::include_graphics(
-    "/Users/rujin/Dropbox/writing/SCOPE_Git/Figures/T16.png")
 ```
