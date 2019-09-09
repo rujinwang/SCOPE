@@ -14,7 +14,7 @@ Rujin Wang <rujin@email.unc.edu>
 ```r
 install.packages('devtools')
 
-devtools::install_github("rujinwang/SCOPE/package")
+devtools::install_github("rujinwang/SCOPE")
 ```
 
 ## Description
