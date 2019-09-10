@@ -362,3 +362,10 @@ profiles with cells clustered by hierarchical clustering.
 ```{r, eval=FALSE}
 iCNplot(iCNmat = iCN_sim, ref = ref_sim, Gini = Gini, filename = "iCNplotdemo")
 ```
+
+
+## Session information
+
+```{r}
+sessionInfo()
+```
