@@ -1,3 +1,6 @@
+Changes in version 0.99.2
++ Bump new version to trigger a build
+
 Changes in version 0.99.1
 + Add session_info() to the vignette
 
