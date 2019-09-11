@@ -1,2 +1,5 @@
+Changes in version 0.99.1
++ Add session_info() to the vignette
+
 Changes in version 0.99.0
 + SCOPE getting ready for submission to Bioc
