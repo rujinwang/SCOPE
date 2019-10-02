@@ -1,3 +1,6 @@
+Changes in version 0.99.4
++ Add .bed file for hg38
+
 Changes in version 0.99.3
 + Test if SCOPE is linked to WGSmapp
 
