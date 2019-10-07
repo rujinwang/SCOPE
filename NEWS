@@ -1,3 +1,6 @@
+Changes in version 0.99.5
++ Enable user-define bin length and offer SoSplot
+
 Changes in version 0.99.4
 + Add .bed file for hg38
 
