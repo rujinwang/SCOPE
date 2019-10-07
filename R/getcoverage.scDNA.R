@@ -45,25 +45,35 @@ getcoverage.scDNA = function(bambedObj, mapqthres, seq, hgref = "hg19") {
 
     if(hgref == "hg19"){
         # Get segmental duplication regions
-        seg.dup = read.table(system.file("extdata", "GRCh37GenomicSuperDup.tab", 
-                                        package = "WGSmapp"), head = TRUE)
+        seg.dup = read.table(system.file("extdata", 
+                                        "GRCh37GenomicSuperDup.tab", 
+                                        package = "WGSmapp"), header = TRUE)
         # Get hg19 gaps
-        gaps = read.table(system.file("extdata", "hg19gaps.txt", package = "WGSmapp"), 
-                                        head = TRUE)
+        gaps = read.table(system.file("extdata", "hg19gaps.txt", 
+                                        package = "WGSmapp"), 
+                                        header = TRUE)
     } else{
         # Get segmental duplication regions
-        seg.dup = read.table(system.file("extdata", "GRCh38GenomicSuperDup.tab", 
+        seg.dup = read.table(system.file("extdata", 
+                                        "GRCh38GenomicSuperDup.tab", 
                                         package = "WGSmapp"))
         # Get hg19 gaps
-        gaps = read.table(system.file("extdata", "hg38gaps.txt", package = "WGSmapp"))
+        gaps = read.table(system.file("extdata", "hg38gaps.txt", 
+                                        package = "WGSmapp"))
     }
 
-    seg.dup = seg.dup[!is.na(match(seg.dup[,1], paste('chr', c(1:22, 'X', 'Y'), 
-                                                        sep = ''))),]
-    seg.dup = GRanges(seqnames = seg.dup[,1], ranges = IRanges(start=seg.dup[,2], 
-                                                        end = seg.dup[,3]))
-    gaps = gaps[!is.na(match(gaps[,2], paste('chr', c(1:22, 'X', 'Y'), sep=''))),]
-    gaps = GRanges(seqnames = gaps[,2], ranges = IRanges(start = gaps[,3], end = gaps[,4]))
+    seg.dup = seg.dup[!is.na(match(seg.dup[,1], 
+                        paste('chr', c(seq_len(22), 'X', 'Y'), 
+                        sep = ''))),]
+    seg.dup = GRanges(seqnames = seg.dup[,1], 
+                        ranges = IRanges(start=seg.dup[,2], 
+                                        end = seg.dup[,3]))
+    gaps = gaps[!is.na(match(gaps[,2], 
+                        paste('chr', c(seq_len(22), 'X', 'Y'), 
+                        sep=''))),]
+    gaps = GRanges(seqnames = gaps[,2], 
+                        ranges = IRanges(start = gaps[,3], 
+                        end = gaps[,4]))
     # Generate mask region
     mask.ref = sort(c(seg.dup, gaps))
     

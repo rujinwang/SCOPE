@@ -5,7 +5,7 @@
 \title{Ploidy pre-initialization}
 \usage{
 PreEst_ploidy(Y, Yhat, ref, maxPloidy = 6, minPloidy = 1.5,
-                minBinWidth = 5)
+                minBinWidth = 5, SoS.plot = FALSE)
 }
 \arguments{
 \item{Y}{raw read depth matrix after quality control procedure}
@@ -20,6 +20,9 @@ PreEst_ploidy(Y, Yhat, ref, maxPloidy = 6, minPloidy = 1.5,
 
 \item{minBinWidth}{the minimum number of bins for a changed segment.
 Defalut is \code{5}}
+
+\item{SoS.plot}{logical, whether to generate ploidy pre-estimation 
+plots. Default is \code{FALSE}.}
 }
 \value{
 \item{ploidy.SoS}{Vector of pre-estimated ploidies for each cell}

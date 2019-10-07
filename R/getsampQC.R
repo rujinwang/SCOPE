@@ -12,13 +12,11 @@
 #'
 #' @examples
 #' library(WGSmapp)
-#' bedFile <- system.file('extdata', 'scWGA500kbsort.bed', package = 'SCOPE')
 #' bamfolder <- system.file('extdata', package = 'WGSmapp')
 #' bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 #' bamdir <- file.path(bamfolder, bamFile)
 #' sampname_raw = sapply(strsplit(bamFile, '.', fixed = TRUE), '[', 1)
 #' bambedObj <- getbambed_scope(bamdir = bamdir,
-#'                             bedFile = bedFile,
 #'                             sampname = sampname_raw)
 #' QCmetric_raw = getsampQC(bambedObj)
 #'

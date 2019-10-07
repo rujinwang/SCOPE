@@ -56,18 +56,18 @@ getbambed_scope = function(bamdir, sampname, hgref = "hg19", resolution = 500) {
         names(bed) = c("Chr","Start","End")
         bedFile = NULL
         window_width = resolution * 1000
-        for(chrnum in 1:22) {
+        for(chrnum in seq_len(22)) {
             bed2 = c()
             chrnum = paste0("chr", chrnum)
             tmp_bed = bed[which(bed$Chr == chrnum),]
             chr_start = min(tmp_bed$Start)
             chr_end = max(tmp_bed$End)
-            message("Creating bed file with resolution = ", resolution, "kb for ", 
-                    chrnum)
+            message("Creating bed file with resolution = ", resolution, 
+                    "kb for ", chrnum)
             while(chr_start <= chr_end){
                 tmp_end = min(c(chr_start + window_width - 1,chr_end))
                 bed2 = rbind(bed2, data.frame(Chr = chrnum, Start = chr_start, 
-                                            End = tmp_end, stringsAsFactors = FALSE))
+                                    End = tmp_end, stringsAsFactors = FALSE))
                 chr_start = tmp_end + 1
             }
             bedFile = rbind(bedFile, bed2)

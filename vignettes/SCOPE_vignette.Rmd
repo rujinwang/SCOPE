@@ -127,25 +127,25 @@ samtools view -bS "$barcode"-1.header.sam > "$barcode".bam
 
 # 2. Pre-computation and Quality Control
 ## 2.1 Pre-preparation
-SCOPE provides a pre-stored whole-genome sequencing 
-`.bed` file, with a fixed 500kb genomic interval 
-length. SCOPE enables reconstruction of user-defined 
-genome-wide consecutive bins prior to downstream 
-analysis. Make sure that all chromosomes are named 
-consistently and be concordant with `.bam` files. 
+SCOPE provides pre-stored whole-genome sequencing 
+`.bed` files for both hg19 and hg38, with a fixed 500kb 
+genomic interval length. SCOPE enables reconstruction of 
+user-defined genome-wide consecutive bins prior to downstream 
+analysis by specifying arguments `hgref` and `resolution` 
+in `getbambed_scope()` function. Make sure that all chromosomes 
+are named consistently and be concordant with `.bam` files. 
 SCOPE processes the entire genome altogether. 
 Use function `getbambed_scope()` to finish 
-the pre-preparation step. 
+the pre-preparation step. By default, SCOPE is designed for hg19
+with fixed bin-length = 500kb. 
 ```{r, eval=TRUE}
 library(SCOPE)
 library(WGSmapp)
-bedFile <- system.file("extdata", "scWGA500kbsort.bed", package = "SCOPE")
 bamfolder <- system.file("extdata", package = "WGSmapp")
 bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 bamdir <- file.path(bamfolder, bamFile)
 sampname_raw = sapply(strsplit(bamFile, ".", fixed = TRUE), "[", 1)
-bambedObj <- getbambed_scope(bamdir = bamdir, 
-    bedFile = bedFile, sampname = sampname_raw)
+bambedObj <- getbambed_scope(bamdir = bamdir, sampname = sampname_raw)
 bamdir <- bambedObj$bamdir
 sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
@@ -213,26 +213,8 @@ and [gaps in reference assembly](https://gist.github.com/leipzig/6123703)
 from telomere, centromere, and/or 
 heterochromatin regions. 
 ```{r, eval=TRUE}
-# Get segmental duplication regions
-seg.dup = read.table(system.file("extdata", "GRCh37GenomicSuperDup.tab", 
-    package = "WGSmapp"), head = TRUE)
-seg.dup = seg.dup[!is.na(match(seg.dup[,1], 
-    paste('chr', c(1:22, 'X', 'Y'), sep = ''))),]
-seg.dup = GRanges(seqnames = seg.dup[,1], 
-    ranges = IRanges(start=seg.dup[,2], end = seg.dup[,3]))
-# Get hg19 gaps
-gaps = read.table(system.file("extdata", "hg19gaps.txt", 
-    package = "WGSmapp"), head = TRUE)
-gaps = gaps[!is.na(match(gaps[,2], 
-    paste('chr', c(1:22, 'X', 'Y'), sep=''))),]
-gaps = GRanges(seqnames = gaps[,2], 
-    ranges = IRanges(start = gaps[,3], end = gaps[,4]))
-# Generate mask region
-mask.ref = sort(c(seg.dup, gaps))
-
 # Getting raw read depth
-coverageObj <- getcoverage.scDNA(bambedObj, 
-    mapqthres = 40, mask.ref, seq='paired-end')
+coverageObj <- getcoverage.scDNA(bambedObj, mapqthres = 40, seq='paired-end')
 Y_raw <- coverageObj$Y
 ```
 
@@ -286,12 +268,18 @@ Gini = getGini(Y_sim)
 
 ## 3.2 Running SCOPE with negative control samples
 
-Normal cell index is determined either by Gini 
-coefficients or prior knowledge. The normalization 
-procedure is embeded an Expectation-Maximization 
-algorithm in the Poisson generalizaed linear model. 
-The final selected optimal number of CNV group 
-will be returned and then perform normalization. 
+Normal cell index is determined either by Gini coefficients 
+or prior knowledge. SCOPE utilizes ploidy estimates from a 
+first-pass normalization run to ensure fast convergence
+and to avoid local optima. Specify `SoS.plot = TRUE` in 
+`PreEst_ploidy()` to visualize ploidy pre-estimations. 
+The normalization procedure is embeded an Expectation-Maximization 
+algorithm in the Poisson generalizaed linear model. Note that, 
+by setting `ploidyInt` in the normalization function, SCOPE allows 
+users to exploit prior-knowledge ploidies as the input and to 
+manually tune a few cells that have poor fitting. The final 
+selected optimal number of CNV group will be returned and then 
+perform normalization. 
 ```{r, eval=TRUE, message=TRUE}
 # first-pass CODEX2 run with no latent factors
 normObj.sim <- normalize_codex2_ns_noK(Y_qc =Y_sim,

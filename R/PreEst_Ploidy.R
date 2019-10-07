@@ -4,7 +4,7 @@
 #'
 #' @usage
 #' PreEst_ploidy(Y, Yhat, ref, maxPloidy = 6, minPloidy = 1.5,
-#'                 minBinWidth = 5)
+#'                 minBinWidth = 5, SoS.plot = FALSE)
 #' @param Y raw read depth matrix after quality control procedure
 #' @param Yhat normalized read depth matrix
 #' @param ref GRanges object after quality control procedure
@@ -12,6 +12,8 @@
 #' @param minPloidy minimum ploidy candidate. Defalut is \code{1.5}
 #' @param minBinWidth the minimum number of bins for a changed segment.
 #'  Defalut is \code{5}
+#' @param SoS.plot logical, whether to generate ploidy pre-estimation 
+#'  plots. Default is \code{FALSE}. 
 #'
 #' @return
 #'     \item{ploidy.SoS}{Vector of pre-estimated ploidies for each cell}
@@ -39,7 +41,7 @@
 #' @importFrom IRanges end
 #' @export
 PreEst_ploidy = function(Y, Yhat, ref, maxPloidy = 6,
-    minPloidy = 1.5, minBinWidth = 5) {
+    minPloidy = 1.5, minBinWidth = 5, SoS.plot = FALSE) {
     ploidy.SoS = rep(NA, ncol(Y))
 
     breaks = matrix(0, nrow(Y), ncol(Y))
@@ -87,6 +89,17 @@ PreEst_ploidy = function(Y, Yhat, ref, maxPloidy = 6,
         Diff2 = (SCNP - FSCP)^2
         SoS[, k] = colSums(Diff2, na.rm = FALSE, dims = 1)
         ploidy.SoS[k] = X[which.min(SoS[, k])]
+        
+        
+        if(SoS.plot){
+            par(mfrow=c(1,2))
+            par(mar=c(5,4,4,2))
+            hist(Y[,k], 100, main = 'Read depth distribution', 
+                xlab = 'Coverage per bin')
+            plot(X, SoS[,k], xlab = "ploidy", ylab = "Sum of squared errors", 
+                main = "First-pass estimation of ploidy", pch = 16)
+            abline(v = X[which.min(SoS[,k])], lty = 2)
+        }
     }
     return(ploidy.SoS)
 }

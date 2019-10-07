@@ -22,7 +22,9 @@
 #'  of heterozygous deletion and a group of null region. The rest groups
 #'  are representative of different duplication states.
 #' @param ploidyInt a vector of initialized ploidy return
-#'  from \code{PreEst_Ploidy}
+#'  from \code{PreEst_Ploidy}. Users are also allowed to provide
+#'  prior-knowledge ploidies as the input and to manually tune a few 
+#'  cells that have poor fitting
 #' @param beta0 a vector of initialized bin-specific biases returned
 #'  from CODEX2 without latent factors
 #' @param minCountQC the minimum read coverage required for normalization

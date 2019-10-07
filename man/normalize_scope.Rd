@@ -25,7 +25,9 @@ of heterozygous deletion and a group of null region. The rest
 groups are representative of different duplication states.}
 
 \item{ploidyInt}{a vector of initialized ploidy return
-from \code{PreEst_Ploidy}}
+from \code{PreEst_Ploidy}. Users are also allowed to provide
+prior-knowledge ploidies as the input and to manually tune a few 
+cells that have poor fitting}
 
 \item{beta0}{a vector of initialized bin-specific biases
 returned from CODEX2 without latent factors}
