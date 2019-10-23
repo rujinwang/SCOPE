@@ -41,7 +41,7 @@ getbambed_scope = function(bamdir, sampname, hgref = "hg19", resolution = 500) {
         stop("Invalid fixed bin length!")
     }
     if(hgref == "hg19"){
-        coordinates = system.file('extdata', 'scWGA500kbsort.bed', 
+        coordinates = system.file('extdata', 'scWGA500kb.hg19.bed', 
                                 package = 'SCOPE')
     }else{
         coordinates = system.file('extdata', 'scWGA500kb.hg38.bed', 
