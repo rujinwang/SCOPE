@@ -29,9 +29,9 @@ raw read depth data from single-cell DNA sequencing, without
 latent factors under the case-control setting.
 }
 \examples{
-Gini = getGini(Y_sim)
+Gini <- get_gini(Y_sim)
 # first-pass CODEX2 run with no latent factors
-normObj.sim <- normalize_codex2_ns_noK(Y_qc =Y_sim,
+normObj.sim <- normalize_codex2_ns_noK(Y_qc = Y_sim,
                                         gc_qc = ref_sim$gc,
                                         norm_index = which(Gini<=0.12))
 

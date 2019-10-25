@@ -26,7 +26,7 @@ of heterozygous deletion and a group of null region. The rest groups
 are representative of different duplication states.}
 
 \item{ploidyInt}{a vector of initialized ploidy return
-from \code{PreEst_Ploidy}. Users are also allowed to provide
+from \code{initialize_ploidy}. Users are also allowed to provide
 prior-knowledge ploidies as the input and to manually tune a few 
 cells that have poor fitting}
 
@@ -60,30 +60,31 @@ content bias using an expectation-maximization algorithm,
 which accounts for the different copy number states.
 }
 \examples{
-Gini = getGini(Y_sim)
+Gini <- get_gini(Y_sim)
 
 # first-pass CODEX2 run with no latent factors
-normObj.sim <- normalize_codex2_ns_noK(Y_qc =Y_sim,
+normObj.sim <- normalize_codex2_ns_noK(Y_qc = Y_sim,
                                         gc_qc = ref_sim$gc,
                                         norm_index = which(Gini<=0.12))
-Yhat.noK.sim=normObj.sim$Yhat
-beta.hat.noK.sim=normObj.sim$beta.hat
-fGC.hat.noK.sim=normObj.sim$fGC.hat
-N.sim = normObj.sim$N
+Yhat.noK.sim <- normObj.sim$Yhat
+beta.hat.noK.sim <- normObj.sim$beta.hat
+fGC.hat.noK.sim <- normObj.sim$fGC.hat
+N.sim <- normObj.sim$N
 
 # Ploidy initialization
-ploidy.sim = PreEst_ploidy(Y = Y_sim,
+ploidy.sim <- initialize_ploidy(Y = Y_sim,
                             Yhat = Yhat.noK.sim,
                             ref = ref_sim)
 ploidy.sim
 
 # Specify nCores = 2 only for checking examples
-normObj.scope.sim = normalize_scope_foreach(Y_qc = Y_sim, gc_qc = ref_sim$gc,
+normObj.scope.sim <- normalize_scope_foreach(Y_qc = Y_sim, 
+                        gc_qc = ref_sim$gc,
                         K = 1, ploidyInt = ploidy.sim,
                         norm_index = which(Gini<=0.12), T = 1:7,
                         beta0 = beta.hat.noK.sim, nCores = 2)
-Yhat.sim = normObj.scope.sim$Yhat[[which.max(normObj.scope.sim$BIC)]]
-fGC.hat.sim = normObj.scope.sim$fGC.hat[[which.max(normObj.scope.sim$BIC)]]
+Yhat.sim <- normObj.scope.sim$Yhat[[which.max(normObj.scope.sim$BIC)]]
+fGC.hat.sim <- normObj.scope.sim$fGC.hat[[which.max(normObj.scope.sim$BIC)]]
 
 }
 \author{
