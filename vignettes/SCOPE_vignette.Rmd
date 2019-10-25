@@ -46,6 +46,12 @@ from the same genetic background
 
 ## 1.2 Bioinformatic pre-processing
 
+We demonstrate here how the pre-processing bioinformatic
+pipeline works. The 
+[Picard toolkit](https://broadinstitute.github.io/picard/) 
+is open-source and free for all uses. The `split_script.py` 
+python script is pre-stored in the package for demultiplexing. 
+
 There are two types of scDNA-seq data sources: public 
 data from NCBI Sequence Read Archive and data from 
 10X Genomics. For the NCBI SRA data, start with the 
@@ -127,25 +133,22 @@ samtools view -bS "$barcode"-1.header.sam > "$barcode".bam
 
 # 2. Pre-computation and Quality Control
 ## 2.1 Pre-preparation
-SCOPE provides pre-stored whole-genome sequencing 
-`.bed` files for both hg19 and hg38, with a fixed 500kb 
-genomic interval length. SCOPE enables reconstruction of 
-user-defined genome-wide consecutive bins prior to downstream 
-analysis by specifying arguments `hgref` and `resolution` 
-in `getbambed_scope()` function. Make sure that all chromosomes 
-are named consistently and be concordant with `.bam` files. 
-SCOPE processes the entire genome altogether. 
-Use function `getbambed_scope()` to finish 
-the pre-preparation step. By default, SCOPE is designed for hg19
-with fixed bin-length = 500kb. 
+SCOPE enables reconstruction of user-defined genome-wide 
+consecutive bins with fixed interval length prior to downstream 
+analysis by specifying arguments `genome` and `resolution` in 
+`get_bam_bed()` function. Make sure that all chromosomes are 
+named consistently and be concordant with `.bam` files. SCOPE 
+processes the entire genome altogether. Use function `get_bam_bed()` 
+to finish the pre-preparation step. By default, SCOPE is designed 
+for hg19 with fixed bin-length = 500kb. 
 ```{r, eval=TRUE}
 library(SCOPE)
 library(WGSmapp)
 bamfolder <- system.file("extdata", package = "WGSmapp")
 bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 bamdir <- file.path(bamfolder, bamFile)
-sampname_raw = sapply(strsplit(bamFile, ".", fixed = TRUE), "[", 1)
-bambedObj <- getbambed_scope(bamdir = bamdir, sampname = sampname_raw)
+sampname_raw <- sapply(strsplit(bamFile, ".", fixed = TRUE), "[", 1)
+bambedObj <- get_bam_bed(bamdir = bamdir, sampname = sampname_raw)
 bamdir <- bambedObj$bamdir
 sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
@@ -165,9 +168,9 @@ the same bin. For SCOPE, the whole-genome mappability
 track on human hg19 assembly is stored as part of the package. 
 ```{r, eval=TRUE}
 data("mapp_hg19")
-mapp <- getmapp(ref_raw, genome = BSgenome.Hsapiens.UCSC.hg19)
+mapp <- get_mapp(ref_raw)
 head(mapp)
-gc <- getgc_scope(ref_raw, genome = BSgenome.Hsapiens.UCSC.hg19)
+gc <- get_gc(ref_raw)
 values(ref_raw) <- cbind(values(ref_raw), DataFrame(gc, mapp))
 ref_raw
 ```
@@ -177,15 +180,19 @@ hg38 assembly is also stored in SCOPE package.
 For more details on mappability calculation, 
 please refer to [CODEX2 for hg38](
 https://github.com/yuchaojiang/CODEX2/blob/master/README.md). 
-Load the hg38 reference package and specify 
-argument `genome = BSgenome.Hsapiens.UCSC.hg38` in `getmapp()` 
-function. By default, `BSgenome.Hsapiens.UCSC.hg19` 
-is used. 
+Load the hg38 reference package, specify argument `hgref = "hg38"` 
+in `get_mapp()` and `genome = BSgenome.Hsapiens.UCSC.hg38` in 
+`get_gc()`. By default, `hg19` and `BSgenome.Hsapiens.UCSC.hg19`
+are used. 
 
 ```{r, eval=FALSE}
 library(BSgenome.Hsapiens.UCSC.hg38)
 data("mapp_hg38")
-mapp <- getmapp(ref_raw, genome = BSgenome.Hsapiens.UCSC.hg38)
+mapp <- get_mapp(ref_raw, hgref = "hg38")
+head(mapp)
+gc <- get_gc(ref_raw, genome = BSgenome.Hsapiens.UCSC.hg38)
+values(ref_raw) <- cbind(values(ref_raw), DataFrame(gc, mapp))
+ref_raw
 ```
 
 Note that SCOPE can also be adapted to 
@@ -214,31 +221,31 @@ from telomere, centromere, and/or
 heterochromatin regions. 
 ```{r, eval=TRUE}
 # Getting raw read depth
-coverageObj <- getcoverage.scDNA(bambedObj, mapqthres = 40, seq='paired-end')
+coverageObj <- get_coverage_scDNA(bambedObj, mapqthres = 40, seq = 'paired-end')
 Y_raw <- coverageObj$Y
 ```
 
 ## 2.4 Quality control
-`getsampQC()` is used to perform QC step on 
+`get_samp_QC()` is used to perform QC step on 
 single cells, where total number/proportion 
 of reads, total number/proportion of mapped 
 reads, total number/proportion of mapped 
 non-duplicate reads, and number/proportion 
 of reads with mapping quality greater than 20 
-will be returned. Use `qc_scope()` to further 
+will be returned. Use `perform_qc()` to further 
 remove samples/cells with low proportion of 
 mapped reads, bins that have extreme GC content 
 (less than 20% and greater than 80%) and low 
 mappability (less than 0.9) to reduce artifacts. 
 ```{r, eval=TRUE}
-QCmetric_raw = getsampQC(bambedObj)
-qcObj = qc_scope(Y_raw = Y_raw, 
+QCmetric_raw <- get_samp_QC(bambedObj)
+qcObj <- perform_qc(Y_raw = Y_raw, 
     sampname_raw = sampname_raw, ref_raw = ref_raw, 
     QCmetric_raw = QCmetric_raw)
-Y = qcObj$Y
-sampname = qcObj$sampname
-ref = qcObj$ref
-QCmetric = qcObj$QCmetric
+Y <- qcObj$Y
+sampname <- qcObj$sampname
+ref <- qcObj$ref
+QCmetric <- qcObj$QCmetric
 ```
 
 
@@ -263,7 +270,7 @@ the pre-stored toy dataset as follows.
 library(SCOPE)
 # Load pre-stored toy data. 
 # get gini coefficient for each cell
-Gini = getGini(Y_sim)
+Gini <- get_gini(Y_sim)
 ```
 
 ## 3.2 Running SCOPE with negative control samples
@@ -272,7 +279,7 @@ Normal cell index is determined either by Gini coefficients
 or prior knowledge. SCOPE utilizes ploidy estimates from a 
 first-pass normalization run to ensure fast convergence
 and to avoid local optima. Specify `SoS.plot = TRUE` in 
-`PreEst_ploidy()` to visualize ploidy pre-estimations. 
+`initialize_ploidy()` to visualize ploidy pre-estimations. 
 The normalization procedure is embeded an Expectation-Maximization 
 algorithm in the Poisson generalizaed linear model. Note that, 
 by setting `ploidyInt` in the normalization function, SCOPE allows 
@@ -282,41 +289,41 @@ selected optimal number of CNV group will be returned and then
 perform normalization. 
 ```{r, eval=TRUE, message=TRUE}
 # first-pass CODEX2 run with no latent factors
-normObj.sim <- normalize_codex2_ns_noK(Y_qc =Y_sim,
+normObj.sim <- normalize_codex2_ns_noK(Y_qc = Y_sim,
                                         gc_qc = ref_sim$gc,
                                         norm_index = which(Gini<=0.12))
 
-Yhat.noK.sim=normObj.sim$Yhat
-beta.hat.noK.sim=normObj.sim$beta.hat
-fGC.hat.noK.sim=normObj.sim$fGC.hat
-N.sim = normObj.sim$N
+Yhat.noK.sim <- normObj.sim$Yhat
+beta.hat.noK.sim <- normObj.sim$beta.hat
+fGC.hat.noK.sim <- normObj.sim$fGC.hat
+N.sim <- normObj.sim$N
 
 # Ploidy initialization
-ploidy.sim =  PreEst_ploidy(Y = Y_sim, Yhat = Yhat.noK.sim, ref = ref_sim)
+ploidy.sim <- initialize_ploidy(Y = Y_sim, Yhat = Yhat.noK.sim, ref = ref_sim)
 
 # If using high performance clusters, parallel computing is 
 # easy and improves computational efficiency. Simply use 
 # normalize_scope_foreach() instead of normalize_scope(). 
 # All parameters are identical. 
-normObj.scope.sim = normalize_scope_foreach(Y_qc = Y_sim, gc_qc = ref_sim$gc,
+normObj.scope.sim <- normalize_scope_foreach(Y_qc = Y_sim, gc_qc = ref_sim$gc,
     K = 1, ploidyInt = ploidy.sim,
     norm_index = which(Gini<=0.12), T = 1:7,
     beta0 = beta.hat.noK.sim, nCores = 2)
-# normObj.scope.sim = normalize_scope(Y_qc = Y_sim, gc_qc = ref_sim$gc,
+# normObj.scope.sim <- normalize_scope(Y_qc = Y_sim, gc_qc = ref_sim$gc,
 #     K = 1, ploidyInt = ploidy.sim,
 #     norm_index = which(Gini<=0.12), T = 1:7,
 #     beta0 = beta.hat.noK.sim)
-Yhat.sim = normObj.scope.sim$Yhat[[which.max(normObj.scope.sim$BIC)]]
-fGC.hat.sim = normObj.scope.sim$fGC.hat[[which.max(normObj.scope.sim$BIC)]]
+Yhat.sim <- normObj.scope.sim$Yhat[[which.max(normObj.scope.sim$BIC)]]
+fGC.hat.sim <- normObj.scope.sim$fGC.hat[[which.max(normObj.scope.sim$BIC)]]
 ```
 
 Visualize selection results for _j_-th cell. 
 By default, BIC is used to choose optimal CNV group. 
 ```{r, eval=FALSE}
-choiceofT(Y_qc = Y_sim, gc_qc = ref_sim$gc, norm_index = which(Gini<=0.12), 
+plot_EM_fit(Y_qc = Y_sim, gc_qc = ref_sim$gc, norm_index = which(Gini<=0.12), 
             T = 1:7,
             ploidyInt = ploidy.sim, beta0 = beta.hat.noK.sim,
-            filename = "choiceofTdemo.pdf")
+            filename = "plot_EM_fit_demo.pdf")
 ```
 
 ## 3.3 Cross-sample segmentation by SCOPE
@@ -328,19 +335,19 @@ processes the entire genome chromosome by
 chromosome. Shared breakpoints and integer copy-number 
 profiles will be returned. 
 ```{r, eval=TRUE, message=FALSE}
-chrs = unique(as.character(seqnames(ref_sim)))
-segment_cs = vector('list',length = length(chrs))
-names(segment_cs) = chrs
+chrs <- unique(as.character(seqnames(ref_sim)))
+segment_cs <- vector('list',length = length(chrs))
+names(segment_cs) <- chrs
 for (chri in chrs) {
     message('\n', chri, '\n')
-    segment_cs[[chri]] = segmentCBScs(Y = Y_sim,
+    segment_cs[[chri]] <- segment_CBScs(Y = Y_sim,
                                     Yhat = Yhat.sim,
                                     sampname = colnames(Y_sim),
                                     ref = ref_sim,
                                     chr = chri,
                                     mode = "integer", max.ns = 1)
 }
-iCN_sim = do.call(rbind, lapply(segment_cs, function(z){z[["iCN"]]}))
+iCN_sim <- do.call(rbind, lapply(segment_cs, function(z){z[["iCN"]]}))
 ```
 
 ## 3.4 Visualization
@@ -348,7 +355,8 @@ iCN_sim = do.call(rbind, lapply(segment_cs, function(z){z[["iCN"]]}))
 SCOPE offers heatmap of inferred integer copy-number 
 profiles with cells clustered by hierarchical clustering.
 ```{r, eval=FALSE}
-iCNplot(iCNmat = iCN_sim, ref = ref_sim, Gini = Gini, filename = "iCNplotdemo")
+plot_iCN(iCNmat = iCN_sim, ref = ref_sim, Gini = Gini, 
+        filename = "plot_iCN_demo")
 ```
 
 
