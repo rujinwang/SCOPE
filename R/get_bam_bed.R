@@ -12,9 +12,7 @@ if (getRversion() >= "2.15.1") {
 #'  order as sample names in \code{sampname}.
 #' @param sampname vector of sample names. Should be in the same order as bam
 #'  directories in \code{bamdir}.
-#' @param genome by default, \code{genome = BSgenome.Hsapiens.UCSC.hg19}.
-#' To obtain genome reference for hg38, load the hg38 reference package and 
-#' specify \code{genome = BSgenome.Hsapiens.UCSC.hg38}
+#' @param hgref reference genome. This should be either 'hg19' or 'hg38'.
 #' @param resolution numeric value of fixed bin-length. Default is \code{500}.
 #'  Unit is "kb". 
 #'
@@ -41,9 +39,20 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom IRanges IRanges
 #' @importFrom GenomeInfoDb seqnames seqinfo seqlevels
 #' @export
-get_bam_bed <- function(bamdir, sampname, genome = NULL, resolution = 500) {
-    if (is.null(genome)) {
-        genome = BSgenome.Hsapiens.UCSC.hg19
+get_bam_bed <- function(bamdir, sampname, hgref = NULL, resolution = NULL) {
+    if(is.null(hgref)){
+        hgref <- "hg19"
+    }
+    if(!hgref %in% c("hg19", "hg38")){
+        stop("Reference genome should be either hg19 or hg38!")
+    }
+    if(hgref == "hg19") {
+        genome <- BSgenome.Hsapiens.UCSC.hg19
+    }else if(hgref == "hg38") {
+        genome <- BSgenome.Hsapiens.UCSC.hg38
+    }
+    if(is.null(resolution)){
+        resolution <- 500
     }
     if(resolution <= 0){
         stop("Invalid fixed bin length!")

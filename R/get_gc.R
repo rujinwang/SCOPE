@@ -8,9 +8,7 @@ if (getRversion() >= "2.15.1") {
 #' @description Compute GC content for each bin
 #'
 #' @param ref GRanges object returned from \code{get_bam_bed}
-#' @param genome by default, \code{genome = BSgenome.Hsapiens.UCSC.hg19}.
-#' To calculate GC content for hg38, specify
-#' \code{genome = BSgenome.Hsapiens.UCSC.hg38}
+#' @param hgref reference genome. This should be either 'hg19' or 'hg38'.
 #'
 #' @return
 #'   \item{gc}{Vector of GC content for each bin/target}
@@ -27,7 +25,7 @@ if (getRversion() >= "2.15.1") {
 #' sampname_raw <- bambedObj$sampname
 #' ref_raw <- bambedObj$ref
 #'
-#' gc <- get_gc(ref_raw, genome = BSgenome.Hsapiens.UCSC.hg19)
+#' gc <- get_gc(ref_raw)
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import BSgenome.Hsapiens.UCSC.hg19
@@ -36,9 +34,17 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom BiocGenerics start end
 #' @importFrom Biostrings unmasked alphabetFrequency
 #' @export
-get_gc <- function (ref, genome = NULL){
-    if (is.null(genome)) {
-        genome = BSgenome.Hsapiens.UCSC.hg19
+get_gc <- function (ref, hgref = NULL){
+    if(is.null(hgref)){
+        hgref <- "hg19"
+    }
+    if(!hgref %in% c("hg19", "hg38")){
+        stop("Reference genome should be either hg19 or hg38!")
+    }
+    if(hgref == "hg19") {
+        genome <- BSgenome.Hsapiens.UCSC.hg19
+    }else if(hgref == "hg38") {
+        genome <- BSgenome.Hsapiens.UCSC.hg38
     }
     gc <- rep(NA, length(ref))
     for (chr in unique(seqnames(ref))) {

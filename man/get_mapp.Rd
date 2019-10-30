@@ -4,12 +4,12 @@
 \alias{get_mapp}
 \title{Compute mappability}
 \usage{
-get_mapp(ref, hgref = "hg19")
+get_mapp(ref, hgref = NULL)
 }
 \arguments{
 \item{ref}{GRanges object returned from \code{get_bam_bed}}
 
-\item{hgref}{human reference genome. This should be either 'hg19' or 'hg38'.}
+\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
 }
 \value{
 \item{mapp}{Vector of mappability for each bin/target}

@@ -4,14 +4,12 @@
 \alias{get_gc}
 \title{Compute GC content}
 \usage{
-get_gc(ref, genome = NULL)
+get_gc(ref, hgref = NULL)
 }
 \arguments{
 \item{ref}{GRanges object returned from \code{get_bam_bed}}
 
-\item{genome}{by default, \code{genome = BSgenome.Hsapiens.UCSC.hg19}.
-To calculate GC content for hg38, specify
-\code{genome = BSgenome.Hsapiens.UCSC.hg38}}
+\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
 }
 \value{
 \item{gc}{Vector of GC content for each bin/target}
@@ -31,7 +29,7 @@ bamdir <- bambedObj$bamdir
 sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
 
-gc <- get_gc(ref_raw, genome = BSgenome.Hsapiens.UCSC.hg19)
+gc <- get_gc(ref_raw)
 
 }
 \author{

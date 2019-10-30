@@ -4,7 +4,7 @@
 \alias{get_bam_bed}
 \title{Get bam file directories, sample names, and whole genomic bins}
 \usage{
-get_bam_bed(bamdir, sampname, genome = NULL, resolution = 500)
+get_bam_bed(bamdir, sampname, hgref = NULL, resolution = NULL)
 }
 \arguments{
 \item{bamdir}{vector of the directory of a bam file. Should be in the same
@@ -13,9 +13,7 @@ order as sample names in \code{sampname}.}
 \item{sampname}{vector of sample names. Should be in the same order as bam
 directories in \code{bamdir}.}
 
-\item{genome}{by default, \code{genome = BSgenome.Hsapiens.UCSC.hg19}.
-To obtain genome reference for hg38, load the hg38 reference package and 
-specify \code{genome = BSgenome.Hsapiens.UCSC.hg38}}
+\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
 
 \item{resolution}{numeric value of fixed bin-length. Default is \code{500}.
 Unit is "kb".}

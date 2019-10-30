@@ -9,7 +9,7 @@
 #' @param mapqthres mapping quality threshold of reads
 #' @param seq the sequencing method to be used. This should be either
 #' 'paired-end' or 'single-end'
-#' @param hgref human reference genome. This should be either 'hg19' or 'hg38'.
+#' @param hgref reference genome. This should be either 'hg19' or 'hg38'.
 #'
 #' @return
 #'   \item{Y}{Read depth matrix}
@@ -35,48 +35,18 @@
 #' @importFrom IRanges IRanges RangesList Views countOverlaps
 #' @importFrom GenomeInfoDb seqnames
 #' @export
-get_coverage_scDNA <- function(bambedObj, mapqthres, seq, hgref = "hg19") {
+get_coverage_scDNA <- function(bambedObj, mapqthres, seq, hgref = NULL) {
+    if(is.null(hgref)){
+        hgref <- "hg19"
+    }
     if(!hgref %in% c("hg19", "hg38")){
         stop("Reference genome should be either hg19 or hg38!")
     } 
     ref <- bambedObj$ref
     bamdir <- bambedObj$bamdir
     sampname <- bambedObj$sampname
-
-    if(hgref == "hg19"){
-        # Get segmental duplication regions
-        seg.dup <- read.table(system.file("extdata", 
-                                        "GRCh37GenomicSuperDup.tab", 
-                                        package = "WGSmapp"), header = TRUE)
-        # Get hg19 gaps
-        gaps <- read.table(system.file("extdata", "hg19gaps.txt", 
-                                        package = "WGSmapp"), 
-                                        header = TRUE)
-    } else{
-        # Get segmental duplication regions
-        seg.dup <- read.table(system.file("extdata", 
-                                        "GRCh38GenomicSuperDup.tab", 
-                                        package = "WGSmapp"))
-        # Get hg19 gaps
-        gaps <- read.table(system.file("extdata", "hg38gaps.txt", 
-                                        package = "WGSmapp"))
-    }
-
-    seg.dup <- seg.dup[!is.na(match(seg.dup[,1], 
-                        paste('chr', c(seq_len(22), 'X', 'Y'), 
-                        sep = ''))),]
-    seg.dup <- GRanges(seqnames = seg.dup[,1], 
-                        ranges = IRanges(start = seg.dup[,2], 
-                                        end = seg.dup[,3]))
-    gaps <- gaps[!is.na(match(gaps[,2], 
-                        paste('chr', c(seq_len(22), 'X', 'Y'), 
-                        sep = ''))),]
-    gaps <- GRanges(seqnames = gaps[,2], 
-                        ranges = IRanges(start = gaps[,3], 
-                        end = gaps[,4]))
-    # Generate mask region
-    mask.ref <- sort(c(seg.dup, gaps))
     
+    mask.ref <- get_masked_ref(hgref = hgref)
     
     Y <- matrix(nrow = length(ref), ncol = length(sampname))
     rownames(Y) <- paste(seqnames(ref), ":", start(ref), "-", 
@@ -117,3 +87,42 @@ get_coverage_scDNA <- function(bambedObj, mapqthres, seq, hgref = "hg19") {
     }
     list(Y = Y)
 }
+
+
+get_masked_ref <- function(hgref){
+    if(hgref == "hg19"){
+        # Get segmental duplication regions
+        seg.dup <- read.table(system.file("extdata", 
+                                "GRCh37GenomicSuperDup.tab", 
+                                package = "WGSmapp"), header = TRUE)
+        # Get hg19 gaps
+        gaps <- read.table(system.file("extdata", "hg19gaps.txt", 
+                                package = "WGSmapp"), 
+                                header = TRUE)
+    } else if(hgref == "hg38"){
+        # Get segmental duplication regions
+        seg.dup <- read.table(system.file("extdata", 
+                                "GRCh38GenomicSuperDup.tab", 
+                                package = "WGSmapp"))
+        # Get hg19 gaps
+        gaps <- read.table(system.file("extdata", "hg38gaps.txt", 
+                                package = "WGSmapp"))
+    }
+    seg.dup <- seg.dup[!is.na(match(seg.dup[,1], 
+                        paste('chr', c(seq_len(22), 'X', 'Y'), 
+                        sep = ''))),]
+    seg.dup <- GRanges(seqnames = seg.dup[,1], 
+                        ranges = IRanges(start = seg.dup[,2], 
+                        end = seg.dup[,3]))
+    gaps <- gaps[!is.na(match(gaps[,2], 
+                        paste('chr', c(seq_len(22), 'X', 'Y'), 
+                        sep = ''))),]
+    gaps <- GRanges(seqnames = gaps[,2], 
+                        ranges = IRanges(start = gaps[,3], 
+                        end = gaps[,4]))
+    # Generate mask region
+    mask.ref <- sort(c(seg.dup, gaps))
+    return(mask.ref)
+}
+
+

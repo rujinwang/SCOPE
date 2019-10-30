@@ -16,7 +16,7 @@ if (getRversion() >= "2.15.1") {
 #' for hg38, which is pre-saved as well.
 #'
 #' @param ref GRanges object returned from \code{get_bam_bed}
-#' @param hgref human reference genome. This should be either 'hg19' or 'hg38'.
+#' @param hgref reference genome. This should be either 'hg19' or 'hg38'.
 #'
 #' @return
 #'   \item{mapp}{Vector of mappability for each bin/target}
@@ -42,7 +42,10 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom IRanges IRanges RangesList Views countOverlaps findOverlaps width
 #' @importFrom GenomeInfoDb mapSeqlevels seqlevelsStyle seqnames
 #' @export
-get_mapp <- function(ref, hgref = "hg19") {
+get_mapp <- function(ref, hgref = NULL) {
+    if(is.null(hgref)){
+        hgref <- "hg19"
+    }
     if(!hgref %in% c("hg19", "hg38")){
         stop("Reference genome should be either hg19 or hg38!")
     }

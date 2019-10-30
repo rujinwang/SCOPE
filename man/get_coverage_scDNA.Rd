@@ -4,7 +4,7 @@
 \alias{get_coverage_scDNA}
 \title{Get read coverage from single-cell DNA sequencing}
 \usage{
-get_coverage_scDNA(bambedObj, mapqthres, seq, hgref = "hg19")
+get_coverage_scDNA(bambedObj, mapqthres, seq, hgref = NULL)
 }
 \arguments{
 \item{bambedObj}{object returned from \code{get_bam_bed}}
@@ -14,7 +14,7 @@ get_coverage_scDNA(bambedObj, mapqthres, seq, hgref = "hg19")
 \item{seq}{the sequencing method to be used. This should be either
 'paired-end' or 'single-end'}
 
-\item{hgref}{human reference genome. This should be either 'hg19' or 'hg38'.}
+\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
 }
 \value{
 \item{Y}{Read depth matrix}

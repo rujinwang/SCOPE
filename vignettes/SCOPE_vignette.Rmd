@@ -181,16 +181,14 @@ For more details on mappability calculation,
 please refer to [CODEX2 for hg38](
 https://github.com/yuchaojiang/CODEX2/blob/master/README.md). 
 Load the hg38 reference package, specify argument `hgref = "hg38"` 
-in `get_mapp()` and `genome = BSgenome.Hsapiens.UCSC.hg38` in 
-`get_gc()`. By default, `hg19` and `BSgenome.Hsapiens.UCSC.hg19`
-are used. 
+in `get_mapp()` and `get_gc()`. By default, `hg19` are used. 
 
 ```{r, eval=FALSE}
 library(BSgenome.Hsapiens.UCSC.hg38)
 data("mapp_hg38")
 mapp <- get_mapp(ref_raw, hgref = "hg38")
 head(mapp)
-gc <- get_gc(ref_raw, genome = BSgenome.Hsapiens.UCSC.hg38)
+gc <- get_gc(ref_raw, hgref = "hg38")
 values(ref_raw) <- cbind(values(ref_raw), DataFrame(gc, mapp))
 ref_raw
 ```
