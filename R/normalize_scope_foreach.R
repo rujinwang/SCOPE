@@ -81,13 +81,20 @@ normalize_scope_foreach <- function(Y_qc, gc_qc, K, norm_index, T,
             exceed the number of normal samples!")
     Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x) {
         !any(x == 0)
-    }), ]
-    pseudo.sample <- apply(Y.nonzero, 1, function(x) {
-        exp(1/length(x) * sum(log(x)))
-    })
+        }), ]
+    if(dim(Y.nonzero)[1] == 0){
+        Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x) {
+            !all(x == 0)
+            }), , drop = FALSE]
+        pseudo.sample <- apply(Y.nonzero, 1, mean)
+    } else{
+        pseudo.sample <- apply(Y.nonzero, 1, function(x) {
+            exp(sum(log(x))/length(x))
+            })
+    }
     Ntotal <- apply(apply(Y.nonzero, 2, function(x) {
         x/pseudo.sample
-    }), 2, median)
+        }), 2, median)
     N <- round(Ntotal/median(Ntotal) * median(colSums(Y_qc)))
     Nmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc),
         data = N, byrow = TRUE)

@@ -95,13 +95,31 @@ perform_qc <- function(Y_raw, sampname_raw, ref_raw, QCmetric_raw,
     }
     Y.nonzero <- Y[apply(Y, 1, function(x) {
         !any(x == 0)
-    }), ]
-    pseudo.sample <- apply(Y.nonzero, 1, function(x) {
-        exp(sum(log(x))/length(x))
-    })
+        }), , drop = FALSE]
+    if(dim(Y.nonzero)[1] == 0){
+        message("Adopt arithmetic mean instead of geometric mean")
+        Y.nonzero <- Y[apply(Y, 1, function(x) {
+            !all(x == 0)
+            }), , drop = FALSE]
+        pseudo.sample <- apply(Y.nonzero, 1, mean)
+    } else{
+        pseudo.sample <- apply(Y.nonzero, 1, function(x) {
+            exp(sum(log(x))/length(x))
+        })
+    }
     N <- apply(apply(Y.nonzero, 2, function(x) {
         x/pseudo.sample
-    }), 2, median)
+        }), 2, median)
+    sampfilter3 <- (N == 0)
+    message("Removed ", sum(sampfilter3),
+            " samples due to excessive zero read counts in 
+            library size calculation.")
+    if (sum(sampfilter3) != 0) {
+        Y <- Y[, !(sampfilter3)]
+        sampname <- sampname[!(sampfilter3)]
+        QCmetric <- QCmetric[!(sampfilter3), ]
+        N <- N[!(sampfilter3)]
+    }
     Nmat <- matrix(nrow = nrow(Y), ncol = ncol(Y), data = N,
         byrow = TRUE)
     bin.sum <- apply(Y/Nmat, 1, sum)
