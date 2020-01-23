@@ -44,7 +44,7 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
         "#F4A582", "#D6604D", "#B2182B", "#67001F")
 
     if (!is.matrix(iCNmat)) {
-        stop("Invalid plot object: must be an integer matrix! \n")
+        stop("Invalid plot object: must be an integer matrix. \n")
     }
     if (length(ref) != nrow(iCNmat)) {
         stop("Invalid GRanges object: length of ref and # of

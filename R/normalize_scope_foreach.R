@@ -78,7 +78,7 @@ normalize_scope_foreach <- function(Y_qc, gc_qc, K, norm_index, T,
     ploidyInt, beta0, minCountQC = 20, nCores = NULL) {
     if (max(K) > length(norm_index))
         stop("Number of latent Poisson factors K cannot
-            exceed the number of normal samples!")
+            exceed the number of normal samples. ")
     Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x) {
         !any(x == 0)
         }), ]

@@ -12,12 +12,14 @@
 #'
 #' @examples
 #' library(WGSmapp)
+#' library(BSgenome.Hsapiens.UCSC.hg38)
 #' bamfolder <- system.file('extdata', package = 'WGSmapp')
 #' bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 #' bamdir <- file.path(bamfolder, bamFile)
 #' sampname_raw <- sapply(strsplit(bamFile, '.', fixed = TRUE), '[', 1)
 #' bambedObj <- get_bam_bed(bamdir = bamdir,
-#'                             sampname = sampname_raw)
+#'                             sampname = sampname_raw, 
+#'                             hgref = "hg38")
 #' QCmetric_raw = get_samp_QC(bambedObj)
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}

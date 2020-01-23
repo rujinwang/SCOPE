@@ -43,7 +43,7 @@
 segment_CBScs <- function(Y, Yhat, sampname, ref, chr, mode = "integer", 
     max.ns = 0) {
     if (is.na(match(chr, unique(as.character(seqnames(ref)))))) {
-        stop("Chromosome not found in the reference genome! Make sure that
+        stop("Chromosome not found in the reference genome. Make sure that
             all chromosomes are named consistently.  \n")
     }
 

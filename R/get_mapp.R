@@ -23,31 +23,30 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @examples
 #' library(WGSmapp)
+#' library(BSgenome.Hsapiens.UCSC.hg38)
 #' bamfolder <- system.file('extdata', package = 'WGSmapp')
 #' bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 #' bamdir <- file.path(bamfolder, bamFile)
 #' sampname_raw <- sapply(strsplit(bamFile, '.', fixed = TRUE), '[', 1)
 #' bambedObj <- get_bam_bed(bamdir = bamdir,
-#'                             sampname = sampname_raw)
+#'                             sampname = sampname_raw, 
+#'                             hgref = "hg38")
 #' bamdir <- bambedObj$bamdir
 #' sampname_raw <- bambedObj$sampname
 #' ref_raw <- bambedObj$ref
-#'
-#' data('mapp_hg19')
-#' mapp <- get_mapp(ref_raw)
+#' 
+#' mapp <- get_mapp(ref_raw, hgref = "hg38")
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import utils
-#' @importFrom GenomicRanges GRanges
+#' @importFrom GenomicRanges GRanges pintersect
 #' @importFrom IRanges IRanges RangesList Views countOverlaps findOverlaps width
 #' @importFrom GenomeInfoDb mapSeqlevels seqlevelsStyle seqnames
+#' @importFrom S4Vectors queryHits subjectHits
 #' @export
-get_mapp <- function(ref, hgref = NULL) {
-    if(is.null(hgref)){
-        hgref <- "hg19"
-    }
+get_mapp <- function(ref, hgref = "hg19") {
     if(!hgref %in% c("hg19", "hg38")){
-        stop("Reference genome should be either hg19 or hg38!")
+        stop("Reference genome should be either hg19 or hg38. ")
     }
     if(hgref == "hg19") {
         mapp_gref <- mapp_hg19
@@ -64,11 +63,16 @@ get_mapp <- function(ref, hgref = NULL) {
         overlap <- as.matrix(findOverlaps(ref.chr, mapp_gref))
         for (i in unique(overlap[, 1])) {
             index.temp <- overlap[which(overlap[, 1] == i), 2]
-            mapp.chr[i] <- sum((mapp_gref$score[index.temp]) *
-                (width(mapp_gref)[index.temp]))/sum(width(mapp_gref)[
-                    index.temp])
+            overlap.sub <- findOverlaps(ref.chr[i], mapp_gref[index.temp])
+            overlap.intersect <- pintersect(ref.chr[i][queryHits(
+                                overlap.sub)], mapp_gref[index.temp][
+                                subjectHits(overlap.sub)])
+            mapp.chr[i] <- sum((mapp_gref$score[index.temp]) * 
+                                (width(overlap.intersect)))/sum(
+                                width(overlap.intersect))
         }
         mapp[chr.index] <- mapp.chr
     }
     mapp
 }
+

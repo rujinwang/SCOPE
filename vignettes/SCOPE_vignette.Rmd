@@ -144,11 +144,13 @@ for hg19 with fixed bin-length = 500kb.
 ```{r, eval=TRUE}
 library(SCOPE)
 library(WGSmapp)
+library(BSgenome.Hsapiens.UCSC.hg38)
 bamfolder <- system.file("extdata", package = "WGSmapp")
 bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 bamdir <- file.path(bamfolder, bamFile)
 sampname_raw <- sapply(strsplit(bamFile, ".", fixed = TRUE), "[", 1)
-bambedObj <- get_bam_bed(bamdir = bamdir, sampname = sampname_raw)
+bambedObj <- get_bam_bed(bamdir = bamdir, sampname = sampname_raw, 
+                        hgref = "hg38")
 bamdir <- bambedObj$bamdir
 sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
@@ -166,8 +168,7 @@ and computed weighted average of the mappability
 scores if multiple ENCODE regions overlap with 
 the same bin. For SCOPE, the whole-genome mappability 
 track on human hg19 assembly is stored as part of the package. 
-```{r, eval=TRUE}
-data("mapp_hg19")
+```{r, eval=FALSE}
 mapp <- get_mapp(ref_raw)
 head(mapp)
 gc <- get_gc(ref_raw)
@@ -183,9 +184,7 @@ https://github.com/yuchaojiang/CODEX2/blob/master/README.md).
 Load the hg38 reference package, specify argument `hgref = "hg38"` 
 in `get_mapp()` and `get_gc()`. By default, `hg19` are used. 
 
-```{r, eval=FALSE}
-library(BSgenome.Hsapiens.UCSC.hg38)
-data("mapp_hg38")
+```{r, eval=TRUE}
 mapp <- get_mapp(ref_raw, hgref = "hg38")
 head(mapp)
 gc <- get_gc(ref_raw, hgref = "hg38")

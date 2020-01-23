@@ -15,17 +15,19 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @examples
 #' library(WGSmapp)
+#' library(BSgenome.Hsapiens.UCSC.hg38)
 #' bamfolder <- system.file('extdata', package = 'WGSmapp')
 #' bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 #' bamdir <- file.path(bamfolder, bamFile)
 #' sampname_raw <- sapply(strsplit(bamFile, '.', fixed = TRUE), '[', 1)
 #' bambedObj <- get_bam_bed(bamdir = bamdir,
-#'                             sampname = sampname_raw)
+#'                             sampname = sampname_raw, 
+#'                             hgref = "hg38")
 #' bamdir <- bambedObj$bamdir
 #' sampname_raw <- bambedObj$sampname
 #' ref_raw <- bambedObj$ref
 #'
-#' gc <- get_gc(ref_raw)
+#' gc <- get_gc(ref_raw, hgref = "hg38")
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import BSgenome.Hsapiens.UCSC.hg19
@@ -34,12 +36,9 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom BiocGenerics start end
 #' @importFrom Biostrings unmasked alphabetFrequency
 #' @export
-get_gc <- function (ref, hgref = NULL){
-    if(is.null(hgref)){
-        hgref <- "hg19"
-    }
+get_gc <- function (ref, hgref = "hg19"){
     if(!hgref %in% c("hg19", "hg38")){
-        stop("Reference genome should be either hg19 or hg38!")
+        stop("Reference genome should be either hg19 or hg38. ")
     }
     if(hgref == "hg19") {
         genome <- BSgenome.Hsapiens.UCSC.hg19
@@ -63,7 +62,7 @@ get_gc <- function (ref, hgref = NULL){
         }
         if (length(chrtemp) == 0)
             message("Chromosome cannot be found in NCBI
-                Homo sapiens database!")
+                Homo sapiens database. ")
             chrm <- unmasked(genome[[chrtemp]])
             seqs <- Views(chrm, ref.chr)
             af <- alphabetFrequency(seqs, baseOnly = TRUE, as.prob = TRUE)

@@ -4,7 +4,7 @@
 \alias{get_gc}
 \title{Compute GC content}
 \usage{
-get_gc(ref, hgref = NULL)
+get_gc(ref, hgref = "hg19")
 }
 \arguments{
 \item{ref}{GRanges object returned from \code{get_bam_bed}}
@@ -19,17 +19,19 @@ Compute GC content for each bin
 }
 \examples{
 library(WGSmapp)
+library(BSgenome.Hsapiens.UCSC.hg38)
 bamfolder <- system.file('extdata', package = 'WGSmapp')
 bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 bamdir <- file.path(bamfolder, bamFile)
 sampname_raw <- sapply(strsplit(bamFile, '.', fixed = TRUE), '[', 1)
 bambedObj <- get_bam_bed(bamdir = bamdir,
-                            sampname = sampname_raw)
+                            sampname = sampname_raw, 
+                            hgref = "hg38")
 bamdir <- bambedObj$bamdir
 sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
 
-gc <- get_gc(ref_raw)
+gc <- get_gc(ref_raw, hgref = "hg38")
 
 }
 \author{

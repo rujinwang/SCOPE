@@ -23,11 +23,13 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @examples
 #' library(WGSmapp)
+#' library(BSgenome.Hsapiens.UCSC.hg38)
 #' bamfolder <- system.file('extdata', package = 'WGSmapp')
 #' bamFile <- list.files(bamfolder, pattern = '*.dedup.bam$')
 #' bamdir <- file.path(bamfolder, bamFile)
 #' sampname_raw <- sapply(strsplit(bamFile, '.', fixed = TRUE), '[', 1)
-#' bambedObj <- get_bam_bed(bamdir = bamdir, sampname = sampname_raw)
+#' bambedObj <- get_bam_bed(bamdir = bamdir, sampname = sampname_raw, 
+#'                         hgref = "hg38")
 #' bamdir <- bambedObj$bamdir
 #' sampname_raw <- bambedObj$sampname
 #' ref_raw <- bambedObj$ref
@@ -39,23 +41,17 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom IRanges IRanges
 #' @importFrom GenomeInfoDb seqnames seqinfo seqlevels
 #' @export
-get_bam_bed <- function(bamdir, sampname, hgref = NULL, resolution = NULL) {
-    if(is.null(hgref)){
-        hgref <- "hg19"
-    }
+get_bam_bed <- function(bamdir, sampname, hgref = "hg19", resolution = 500) {
     if(!hgref %in% c("hg19", "hg38")){
-        stop("Reference genome should be either hg19 or hg38!")
+        stop("Reference genome should be either hg19 or hg38. ")
     }
     if(hgref == "hg19") {
         genome <- BSgenome.Hsapiens.UCSC.hg19
     }else if(hgref == "hg38") {
         genome <- BSgenome.Hsapiens.UCSC.hg38
     }
-    if(is.null(resolution)){
-        resolution <- 500
-    }
     if(resolution <= 0){
-        stop("Invalid fixed bin length!")
+        stop("Invalid fixed bin length. ")
     }
     bins <- tileGenome(seqinfo(genome), 
                     tilewidth = resolution * 1000, 
