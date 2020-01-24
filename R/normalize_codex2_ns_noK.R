@@ -30,20 +30,21 @@
 normalize_codex2_ns_noK <- function(Y_qc, gc_qc, norm_index) {
     Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x) {
         !any(x == 0)
-        }), ]
-    if(dim(Y.nonzero)[1] == 0){
-        Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x) {
-            !all(x == 0)
-            }), , drop = FALSE]
-        pseudo.sample <- apply(Y.nonzero, 1, mean)
+        }), , drop = FALSE]
+    if(dim(Y.nonzero)[1] <= 10){
+        message("Adopt arithmetic mean instead of geometric mean")
+        pseudo.sample <- apply(Y_qc, 1, mean)
+        Ntotal <- apply(apply(Y_qc, function(x) {
+            x/pseudo.sample
+        }), 2, median, na.rm = TRUE)
     } else{
         pseudo.sample <- apply(Y.nonzero, 1, function(x) {
             exp(sum(log(x))/length(x))
             })
-    }
-    Ntotal <- apply(apply(Y.nonzero, 2, function(x) {
-        x/pseudo.sample
+        Ntotal <- apply(apply(Y.nonzero, 2, function(x) {
+            x/pseudo.sample
         }), 2, median)
+    }
     N <- round(Ntotal/median(Ntotal) * median(colSums(Y_qc)))
     Nmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), data = N,
         byrow = TRUE)

@@ -96,20 +96,20 @@ perform_qc <- function(Y_raw, sampname_raw, ref_raw, QCmetric_raw,
     Y.nonzero <- Y[apply(Y, 1, function(x) {
         !any(x == 0)
         }), , drop = FALSE]
-    if(dim(Y.nonzero)[1] == 0){
+    if(dim(Y.nonzero)[1] <= 10){
         message("Adopt arithmetic mean instead of geometric mean")
-        Y.nonzero <- Y[apply(Y, 1, function(x) {
-            !all(x == 0)
-            }), , drop = FALSE]
-        pseudo.sample <- apply(Y.nonzero, 1, mean)
+        pseudo.sample <- apply(Y, 1, mean)
+        N <- apply(apply(Y, function(x) {
+            x/pseudo.sample
+        }), 2, median, na.rm = TRUE)
     } else{
         pseudo.sample <- apply(Y.nonzero, 1, function(x) {
             exp(sum(log(x))/length(x))
         })
-    }
-    N <- apply(apply(Y.nonzero, 2, function(x) {
-        x/pseudo.sample
+        N <- apply(apply(Y.nonzero, 2, function(x) {
+            x/pseudo.sample
         }), 2, median)
+    }
     sampfilter3 <- (N == 0)
     message("Removed ", sum(sampfilter3),
             " samples due to excessive zero read counts in 
