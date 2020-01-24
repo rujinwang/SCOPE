@@ -99,7 +99,7 @@ perform_qc <- function(Y_raw, sampname_raw, ref_raw, QCmetric_raw,
     if(dim(Y.nonzero)[1] <= 10){
         message("Adopt arithmetic mean instead of geometric mean")
         pseudo.sample <- apply(Y, 1, mean)
-        N <- apply(apply(Y, function(x) {
+        N <- apply(apply(Y, 2, function(x) {
             x/pseudo.sample
         }), 2, median, na.rm = TRUE)
     } else{

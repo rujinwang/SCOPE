@@ -80,7 +80,7 @@ normalize_scope <- function(Y_qc, gc_qc, K, norm_index, T, ploidyInt,
     if(dim(Y.nonzero)[1] <= 10){
         message("Adopt arithmetic mean instead of geometric mean")
         pseudo.sample <- apply(Y_qc, 1, mean)
-        Ntotal <- apply(apply(Y_qc, function(x) {
+        Ntotal <- apply(apply(Y_qc, 2, function(x) {
             x/pseudo.sample
         }), 2, median, na.rm = TRUE)
     } else{
