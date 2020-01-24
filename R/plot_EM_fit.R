@@ -55,13 +55,21 @@ plot_EM_fit <- function(Y_qc, gc_qc, norm_index, T, ploidyInt, beta0,
     minCountQC = 20, filename) {
     Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x) {
         !any(x == 0)
-    }), ]
-    pseudo.sample <- apply(Y.nonzero, 1, function(x) {
-        exp(1/length(x) * sum(log(x)))
-    })
-    Ntotal <- apply(apply(Y.nonzero, 2, function(x) {
-        x/pseudo.sample
-    }), 2, median)
+    }), , drop = FALSE]
+    if(dim(Y.nonzero)[1] <= 10){
+        message("Adopt arithmetic mean instead of geometric mean")
+        pseudo.sample <- apply(Y_qc, 1, mean)
+        Ntotal <- apply(apply(Y_qc, 2, function(x) {
+            x/pseudo.sample
+        }), 2, median, na.rm = TRUE)
+    } else{
+        pseudo.sample <- apply(Y.nonzero, 1, function(x) {
+            exp(sum(log(x))/length(x))
+        })
+        Ntotal <- apply(apply(Y.nonzero, 2, function(x) {
+            x/pseudo.sample
+        }), 2, median)
+    }
     N <- round(Ntotal/median(Ntotal) * median(colSums(Y_qc)))
     Nmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), data = N, byrow = TRUE)
 
