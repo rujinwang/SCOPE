@@ -4,7 +4,7 @@
 \alias{get_coverage_scDNA}
 \title{Get read coverage from single-cell DNA sequencing}
 \usage{
-get_coverage_scDNA(bambedObj, mapqthres, seq, hgref = NULL)
+get_coverage_scDNA(bambedObj, mapqthres, seq, hgref = "hg19")
 }
 \arguments{
 \item{bambedObj}{object returned from \code{get_bam_bed}}
@@ -39,7 +39,8 @@ bambedObj <- get_bam_bed(bamdir = bamdir,
 # Getting raw read depth
 coverageObj <- get_coverage_scDNA(bambedObj,
                                 mapqthres = 40,
-                                seq = 'paired-end')
+                                seq = 'paired-end', 
+                                hgref = "hg38")
 Y_raw <- coverageObj$Y
 
 }

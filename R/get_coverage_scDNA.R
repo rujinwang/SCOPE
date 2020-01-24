@@ -28,7 +28,8 @@
 #' # Getting raw read depth
 #' coverageObj <- get_coverage_scDNA(bambedObj,
 #'                                 mapqthres = 40,
-#'                                 seq = 'paired-end')
+#'                                 seq = 'paired-end', 
+#'                                 hgref = "hg38")
 #' Y_raw <- coverageObj$Y
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
@@ -37,10 +38,7 @@
 #' @importFrom IRanges IRanges RangesList Views countOverlaps
 #' @importFrom GenomeInfoDb seqnames
 #' @export
-get_coverage_scDNA <- function(bambedObj, mapqthres, seq, hgref = NULL) {
-    if(is.null(hgref)){
-        hgref <- "hg19"
-    }
+get_coverage_scDNA <- function(bambedObj, mapqthres, seq, hgref = "hg19") {
     if(!hgref %in% c("hg19", "hg38")){
         stop("Reference genome should be either hg19 or hg38. ")
     } 

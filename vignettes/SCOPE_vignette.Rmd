@@ -218,7 +218,8 @@ from telomere, centromere, and/or
 heterochromatin regions. 
 ```{r, eval=TRUE}
 # Getting raw read depth
-coverageObj <- get_coverage_scDNA(bambedObj, mapqthres = 40, seq = 'paired-end')
+coverageObj <- get_coverage_scDNA(bambedObj, mapqthres = 40, 
+                                seq = 'paired-end', hgref = "hg38")
 Y_raw <- coverageObj$Y
 ```
 
