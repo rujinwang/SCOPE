@@ -26,7 +26,6 @@
 #' log likelihood, and BIC versus the number of CNV groups.
 #'
 #' @examples
-#' \dontrun{
 #' Gini <- get_gini(Y_sim)
 #' # first-pass CODEX2 run with no latent factors
 #' normObj.sim <- normalize_codex2_ns_noK(Y_qc = Y_sim,
@@ -48,7 +47,6 @@
 #'         ploidyInt = ploidy.sim,
 #'         beta0 = beta.hat.noK.sim,
 #'         filename = 'plot_EM_fit_demo.pdf')
-#' }
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import grDevices stats

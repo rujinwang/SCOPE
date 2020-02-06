@@ -18,7 +18,6 @@ get_gc(ref, hgref = "hg19")
 Compute GC content for each bin
 }
 \examples{
-\dontrun{
 library(WGSmapp)
 library(BSgenome.Hsapiens.UCSC.hg38)
 bamfolder <- system.file('extdata', package = 'WGSmapp')
@@ -33,7 +32,6 @@ sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
 
 gc <- get_gc(ref_raw, hgref = "hg38")
-}
 
 }
 \author{

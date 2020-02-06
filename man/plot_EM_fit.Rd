@@ -41,7 +41,6 @@ log likelihood, and BIC versus the number of CNV groups.
 A pdf file containing EM fitting results and plots is generated.
 }
 \examples{
-\dontrun{
 Gini <- get_gini(Y_sim)
 # first-pass CODEX2 run with no latent factors
 normObj.sim <- normalize_codex2_ns_noK(Y_qc = Y_sim,
@@ -63,7 +62,6 @@ plot_EM_fit(Y_qc = Y_sim, gc_qc = ref_sim$gc,
         ploidyInt = ploidy.sim,
         beta0 = beta.hat.noK.sim,
         filename = 'plot_EM_fit_demo.pdf')
-}
 
 }
 \author{
