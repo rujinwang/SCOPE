@@ -26,6 +26,7 @@ reference. Use liftOver utility to calculate mappability
 for hg38, which is pre-saved as well.
 }
 \examples{
+\dontrun{
 library(WGSmapp)
 library(BSgenome.Hsapiens.UCSC.hg38)
 bamfolder <- system.file('extdata', package = 'WGSmapp')
@@ -40,6 +41,7 @@ sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
 
 mapp <- get_mapp(ref_raw, hgref = "hg38")
+}
 
 }
 \author{

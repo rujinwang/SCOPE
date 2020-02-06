@@ -22,6 +22,7 @@ if (getRversion() >= "2.15.1") {
 #'   \item{mapp}{Vector of mappability for each bin/target}
 #'
 #' @examples
+#' \dontrun{
 #' library(WGSmapp)
 #' library(BSgenome.Hsapiens.UCSC.hg38)
 #' bamfolder <- system.file('extdata', package = 'WGSmapp')
@@ -36,6 +37,7 @@ if (getRversion() >= "2.15.1") {
 #' ref_raw <- bambedObj$ref
 #' 
 #' mapp <- get_mapp(ref_raw, hgref = "hg38")
+#' }
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import utils
