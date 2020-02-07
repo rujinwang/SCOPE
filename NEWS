@@ -1,5 +1,5 @@
-Changes in version 0.99.10
-+ fix timeout
+Changes in version 0.99.11
++ get_gc() dontrun
 
 Changes in version 0.99.8
 + minor edit

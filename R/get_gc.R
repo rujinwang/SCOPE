@@ -14,6 +14,7 @@ if (getRversion() >= "2.15.1") {
 #'   \item{gc}{Vector of GC content for each bin/target}
 #'
 #' @examples
+#' \dontrun{
 #' library(WGSmapp)
 #' library(BSgenome.Hsapiens.UCSC.hg38)
 #' bamfolder <- system.file('extdata', package = 'WGSmapp')
@@ -28,6 +29,7 @@ if (getRversion() >= "2.15.1") {
 #' ref_raw <- bambedObj$ref
 #'
 #' gc <- get_gc(ref_raw, hgref = "hg38")
+#' }
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import BSgenome.Hsapiens.UCSC.hg19
