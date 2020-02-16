@@ -305,21 +305,47 @@ ploidy.sim <- initialize_ploidy(Y = Y_sim, Yhat = Yhat.noK.sim, ref = ref_sim)
 # All parameters are identical. 
 normObj.scope.sim <- normalize_scope_foreach(Y_qc = Y_sim, gc_qc = ref_sim$gc,
     K = 1, ploidyInt = ploidy.sim,
-    norm_index = which(Gini<=0.12), T = 1:7,
+    norm_index = which(Gini<=0.12), T = 1:5,
     beta0 = beta.hat.noK.sim, nCores = 2)
 # normObj.scope.sim <- normalize_scope(Y_qc = Y_sim, gc_qc = ref_sim$gc,
 #     K = 1, ploidyInt = ploidy.sim,
-#     norm_index = which(Gini<=0.12), T = 1:7,
+#     norm_index = which(Gini<=0.12), T = 1:5,
 #     beta0 = beta.hat.noK.sim)
 Yhat.sim <- normObj.scope.sim$Yhat[[which.max(normObj.scope.sim$BIC)]]
 fGC.hat.sim <- normObj.scope.sim$fGC.hat[[which.max(normObj.scope.sim$BIC)]]
+```
+
+Upon completion of normalization and segmentation at a first pass, 
+SCOPE includes the option to cluster cells based on the matrix of 
+normalized z-scores, estimated copy numbers, or estimated changepoints. 
+Given the inferred subclones, SCOPE can opt to perform a second round of 
+group-wise ploidy initialization and normalization
+```{r, eval=FALSE}
+# Group-wise ploidy initialization
+clones <- c("normal", "tumor1", "normal", "tumor1", "tumor1")
+ploidy.sim.group <- initialize_ploidy_group(Y = Y_sim, Yhat = Yhat.noK.sim,
+                                ref = ref_sim, groups = clones)
+ploidy.sim.group
+
+# Group-wise normalization
+normObj.scope.sim.group <- normalize_scope_group(Y_qc = Y_sim,
+                                    gc_qc = ref_sim$gc,
+                                    K = 1, ploidyInt = ploidy.sim.group,
+                                    norm_index = which(clones=="normal"),
+                                    groups = clones,
+                                    T = 1:5,
+                                    beta0 = beta.hat.noK.sim)
+Yhat.sim.group <- normObj.scope.sim.group$Yhat[[which.max(
+                                    normObj.scope.sim.group$BIC)]]
+fGC.hat.sim.group <- normObj.scope.sim.group$fGC.hat[[which.max(
+                                    normObj.scope.sim.group$BIC)]]
 ```
 
 Visualize selection results for _j_-th cell. 
 By default, BIC is used to choose optimal CNV group. 
 ```{r, eval=FALSE}
 plot_EM_fit(Y_qc = Y_sim, gc_qc = ref_sim$gc, norm_index = which(Gini<=0.12), 
-            T = 1:7,
+            T = 1:5,
             ploidyInt = ploidy.sim, beta0 = beta.hat.noK.sim,
             filename = "plot_EM_fit_demo.pdf")
 ```

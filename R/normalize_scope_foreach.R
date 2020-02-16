@@ -66,7 +66,7 @@
 #' normObj.scope.sim <- normalize_scope_foreach(Y_qc = Y_sim, 
 #'                         gc_qc = ref_sim$gc,
 #'                         K = 1, ploidyInt = ploidy.sim,
-#'                         norm_index = which(Gini<=0.12), T = 1:7,
+#'                         norm_index = which(Gini<=0.12), T = 1:5,
 #'                         beta0 = beta.hat.noK.sim, nCores = 2)
 #' Yhat.sim <- normObj.scope.sim$Yhat[[which.max(normObj.scope.sim$BIC)]]
 #' fGC.hat.sim <- normObj.scope.sim$fGC.hat[[which.max(normObj.scope.sim$BIC)]]
