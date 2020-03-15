@@ -11,7 +11,18 @@ Rujin Wang <rujin@email.unc.edu>
 
 
 ## Installation
+From Bioconductor
 ```r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+BiocManager::install("WGSmapp")
+BiocManager::install("SCOPE")
+```
+From GitHub
+```
 install.packages('devtools')
 devtools::install_github("rujinwang/WGSmapp")
 devtools::install_github("rujinwang/SCOPE")
@@ -22,4 +33,4 @@ Whole genome single-cell DNA sequencing (scDNA-seq) enables characterization of 
 
 
 ## Manuscript
-Rujin Wang, Danyu Lin, and Yuchao Jiang. SCOPE: A Normalization and Copy Number Estimation Method for Single-Cell DNA Sequencing. ***bioRxiv***, 2019. ([link](https://www.biorxiv.org/content/10.1101/594267v1))
+Rujin Wang, Danyu Lin, and Yuchao Jiang. SCOPE: A Normalization and Copy Number Estimation Method for Single-Cell DNA Sequencing. ***bioRxiv***, 2020. ([link](https://www.biorxiv.org/content/10.1101/594267v2))
