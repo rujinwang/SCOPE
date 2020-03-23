@@ -5,7 +5,8 @@
 \title{Quality control for cells and bins}
 \usage{
 perform_qc(Y_raw, sampname_raw, ref_raw, QCmetric_raw,
-        cov_thresh = 0, mapq20_thresh = 0.3, mapp_thresh = 0.9,
+        cov_thresh = 0, minCountQC = 20, 
+        mapq20_thresh = 0.3, mapp_thresh = 0.9,
         gc_thresh = c(20, 80), nMAD = 3)
 }
 \arguments{

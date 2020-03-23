@@ -176,7 +176,8 @@ normalize_scope_foreach <- function(Y_qc, gc_qc, K, norm_index, T,
             fhatnew[fhatnew < quantile(fhatnew, 0.005)] <- quantile(
                 fhatnew, 0.005)
             betahatnew <- apply((Y_qc/(fhatnew * Nmat *
-                exp(ghat %*% t(hhat))))[, norm_index], 1, median)
+                exp(ghat %*% t(hhat))))[, norm_index, drop = FALSE], 
+                1, median)
             betahatnew[betahatnew <= 0] <- min(betahatnew[betahatnew > 0])
             bhdiff[iter] <- sum((betahatnew - betahat)^2)/length(betahat)
             fhdiff[iter] <- sum((fhatnew - fhat)^2)/length(fhat)
