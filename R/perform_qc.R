@@ -4,7 +4,8 @@
 #'
 #' @usage
 #' perform_qc(Y_raw, sampname_raw, ref_raw, QCmetric_raw,
-#'         cov_thresh = 0, mapq20_thresh = 0.3, mapp_thresh = 0.9,
+#'         cov_thresh = 0, minCountQC = 20, 
+#'         mapq20_thresh = 0.3, mapp_thresh = 0.9,
 #'         gc_thresh = c(20, 80), nMAD = 3)
 #'
 #' @param Y_raw raw read count matrix returned
@@ -18,6 +19,8 @@
 #'  \code{\link{get_samp_QC}}
 #' @param cov_thresh scalar variable specifying the lower bound of read count
 #'  summation of each cell. Default is \code{0}
+#' @param minCountQC the minimum read coverage required for
+#'  normalization and EM fitting. Defalut is \code{20}
 #' @param mapq20_thresh scalar variable specifying the lower threshold
 #'  of proportion of reads with mapping quality greater than 20.
 #'  Default is \code{0.3}
@@ -49,7 +52,8 @@
 #' @import stats
 #' @export
 perform_qc <- function(Y_raw, sampname_raw, ref_raw, QCmetric_raw,
-    cov_thresh = 0, mapq20_thresh = 0.3, mapp_thresh = 0.9,
+    cov_thresh = 0, minCountQC = 20, 
+    mapq20_thresh = 0.3, mapp_thresh = 0.9,
     gc_thresh = c(20, 80), nMAD = 3) {
     if (length(ref_raw) != nrow(Y_raw)) {
         stop("Invalid inputs: length of ref and # of rows
@@ -68,13 +72,18 @@ perform_qc <- function(Y_raw, sampname_raw, ref_raw, QCmetric_raw,
     sampfilter1 <- (apply(Y_raw, 2, sum) <= cov_thresh)
     message("Removed ", sum(sampfilter1),
         " samples due to failed library preparation.")
-    sampfilter2 <- (QCmetric_raw[, "mapq20_prop"] < mapq20_thresh)
+    sampfilter2 <- (apply(Y_raw, 2, mean) <= minCountQC)
     message("Removed ", sum(sampfilter2),
+        " samples due to failure to meet min coverage requirement.")    
+    sampfilter3 <- (QCmetric_raw[, "mapq20_prop"] < mapq20_thresh)
+    message("Removed ", sum(sampfilter3),
         " samples due to low proportion of mapped reads.")
-    if (sum(sampfilter1 | sampfilter2) != 0) {
-        Y <- Y_raw[, !(sampfilter1 | sampfilter2)]
-        sampname <- sampname_raw[!(sampfilter1 | sampfilter2)]
-        QCmetric <- QCmetric_raw[!(sampfilter1 | sampfilter2), ]
+    if (sum(sampfilter1 | sampfilter2 | sampfilter3) != 0) {
+        Y <- Y_raw[, !(sampfilter1 | sampfilter2 | sampfilter3)]
+        sampname <- sampname_raw[!(sampfilter1 | sampfilter2 
+                                | sampfilter3)]
+        QCmetric <- QCmetric_raw[!(sampfilter1 | sampfilter2 
+                                | sampfilter3), ]
     } else {
         Y <- Y_raw
         sampname <- sampname_raw

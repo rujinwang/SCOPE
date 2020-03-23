@@ -25,6 +25,9 @@ and mappability for quality control returned from
 \item{cov_thresh}{scalar variable specifying the lower bound of read count
 summation of each cell. Default is \code{0}}
 
+\item{minCountQC}{the minimum read coverage required for
+normalization and EM fitting. Defalut is \code{20}}
+
 \item{mapq20_thresh}{scalar variable specifying the lower threshold
 of proportion of reads with mapping quality greater than 20.
 Default is \code{0.3}}
