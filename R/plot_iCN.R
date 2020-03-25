@@ -88,22 +88,22 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
         }
     } else {
         if (plot.dendrogram) {
-            mm <- matrix(c(0, 0, 0, 5, 0,
-                2, 3, 4, 1, 6,
-                2, 3, 4, 1, 7,
-                2, 3, 4, 1, 8), nrow = 4, byrow = TRUE)
+            mm <- matrix(c(0, 0, 4, 7, 0,
+                2, 3, 1, 7, 5,
+                2, 3, 1, 7, 0,
+                2, 3, 1, 7, 6), nrow = 4, byrow = TRUE)
             mh <- c(2, 20, 20, 20)
             mh <- mh/sum(mh)
-            mw <- c(0.25, 0.1, 0.1, 5, 0.5)
+            mw <- c(0.25, 0.1, 5, 0.2, 0.5)
             mw <- mw/sum(mw)
         } else {
-            mm <- matrix(c(0, 0, 0, 4, 0,
-                0, 2, 3, 1, 5,
-                0, 2, 3, 1, 6,
-                0, 2, 3, 1, 7), nrow = 4, byrow = TRUE)
+            mm <- matrix(c(0, 0, 3, 6, 0,
+                0, 2, 1, 6, 4,
+                0, 2, 1, 6, 0,
+                0, 2, 1, 6, 5), nrow = 4, byrow = TRUE)
             mh <- c(2, 20, 20, 20)
             mh <- mh/sum(mh)
-            mw <- c(0.25, 0.1, 0.1, 5, 0.5)
+            mw <- c(0.25, 0.1, 5, 0.2, 0.5)
             mw <- mw/sum(mw)
         }
     }
@@ -140,6 +140,11 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
     for (i in seq_len(length(chr.pos))) {
         abline(v = chr.pos[i]/length(ref), lwd = 2)
     }
+    if (!is.null(annotation)) {
+        anno.level <- levels(annotation)
+        anno.mat <- matrix(match(annotation[rclust$order], anno.level), nrow = nrow(dat), ncol = 1)
+        axis(side = 4, at = seq(1,0,length.out=length(anno.level)), labels = anno.level[anno.mat], las = 2)
+    }
 
     # 2) hclust
     if (plot.dendrogram) {
@@ -154,18 +159,7 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
     smart_image(anno.Gini, col = col.Gini, xaxs = "i",
         yaxs = "i", axes = FALSE)
 
-    if (!is.null(annotation)) {
-        # 4) Customized annotation
-        anno.level <- levels(annotation)
-        anno.mat <- matrix(match(annotation[rclust$order], anno.level),
-            nrow = nrow(dat), ncol = 1)
-        col.anno <- brewer.pal(n = 12, name = "Set3")[
-            sort(unique(match(annotation[rclust$order], anno.level)))]
-        smart_image(anno.mat, col = col.anno, xaxs = "i",
-            yaxs = "i", axes = FALSE)
-    }
-
-    # 5) chromosome
+    # 4) chromosome
     anno.chrom <- NULL
     for (i in seq_len(22)) {
         if (i%%2 == 1) {
@@ -183,7 +177,7 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
     pos.text <- xpos/length(ref)
     text(pos.text, 0.2, seq(22), col = c("black", "grey"), cex = 1.5)
 
-    # 6) Gini legend
+    # 5) Gini legend
     par(mar = c(2, 2, 2, 4))
     image(1, seq_len(length(brewer.pal(n = 8, name = "Blues"))),
         t(as.matrix(seq_len(length(brewer.pal(n = 8, name = "Blues"))))),
@@ -194,13 +188,7 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
         col = NA, lwd.ticks = 0, cex.axis = 1.5, las = 2, font = 2)
     title("Gini", cex.main = 1.5)
 
-    if (!is.null(annotation)) {
-        plot(0, 0, type = "n", axes = FALSE)
-        legend("center", legend = sort(unique(annotation)),
-            col = col.anno, pch = 15, bty = "n", cex = 1.5)
-    }
-
-    # 8) iCN legend
+    # 6) iCN legend
     par(mar = c(2, 2, 2, 4))
     image(1, seq_len(length(hm_col[iCNtab + 1])),
         t(as.matrix(seq_len(length(hm_col[iCNtab + 1])))),
@@ -210,6 +198,8 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
         labels = c(0:7)[iCNtab + 1], col.ticks = "white", col = NA,
         lwd.ticks = 0, cex.axis = 1.5, las = 2, font = 2)
     title("integer CN", cex.main = 1.5)
+
+    # 7) Buffer space for annotations right-side axis
     dev.off()
 }
 
