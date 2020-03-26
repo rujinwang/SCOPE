@@ -118,13 +118,14 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
     }
 
     chr.pos <- rep(NA, length(unique(seqnames(ref))))
-    for (chri in seq_len(22)) {
+    for (chri in seq_len(24)) {
         chr.pos[chri] <- length(ref[which(as.character(
-            seqnames(ref)) == paste0("chr", chri))])
+            seqnames(ref)) == paste0("chr", c(seq_len(22), 
+                                  "X", "Y"))[chri])])
     }
     chr.pos <- cumsum(chr.pos)
-    xpos <- round(c(0, chr.pos[seq_len(21)]) +
-        (chr.pos - c(0, chr.pos[seq_len(21)]))/2)
+    xpos <- round(c(0, chr.pos[seq_len(23)]) +
+        (chr.pos - c(0, chr.pos[seq_len(23)]))/2)
 
     # 1) iCN heatmap
     dat <- t(iCNmat)
@@ -161,8 +162,16 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
 
     # 4) chromosome
     anno.chrom <- NULL
-    for (i in seq_len(22)) {
-        if (i%%2 == 1) {
+    for (i in seq_len(24)) {
+        if (i == 23) {
+            temp <- matrix(rep(1, length(which(as.character(
+                seqnames(ref)) == "chrX"))), nrow = 1)
+            anno.chrom <- cbind(anno.chrom, temp)
+        } else if (i == 24) {
+            temp <- matrix(rep(2, length(which(as.character(
+                seqnames(ref)) == "chrY"))), nrow = 1)
+            anno.chrom <- cbind(anno.chrom, temp)
+        } else if (i%%2 == 1) {
             temp <- matrix(rep(1, length(which(as.character(
                 seqnames(ref)) == paste0("chr", i)))), nrow = 1)
             anno.chrom <- cbind(anno.chrom, temp)
@@ -175,7 +184,7 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
     image(t(anno.chrom), col = c("gray", "black"),
         xaxs = "i", yaxs = "i", axes = FALSE)
     pos.text <- xpos/length(ref)
-    text(pos.text, 0.2, seq(22), col = c("black", "grey"), cex = 1.5)
+    text(pos.text, 0.2, c(seq(22), "X", "Y"), col = c("black", "grey"), cex = 1.2)
 
     # 5) Gini legend
     par(mar = c(2, 2, 2, 4))

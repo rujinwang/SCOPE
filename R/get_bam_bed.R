@@ -57,7 +57,8 @@ get_bam_bed <- function(bamdir, sampname, hgref = "hg19", resolution = 500) {
                     tilewidth = resolution * 1000, 
                     cut.last.tile.in.chrom = TRUE)
     ref <- bins[which(as.character(seqnames(bins)) %in% paste0("chr", 
-                                                        seq_len(22)))]
+                                                        c(seq_len(22), 
+                                                        "X", "Y")))]
     if (!any(grepl("chr", seqlevels(ref)))) {
         seqlevels(ref) <- paste(c(seq_len(22), "X", "Y"), sep = "")
         ref <- sort(ref)
