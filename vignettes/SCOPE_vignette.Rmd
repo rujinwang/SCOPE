@@ -246,7 +246,24 @@ ref <- qcObj$ref
 QCmetric <- qcObj$QCmetric
 ```
 
-
+## 2.5 SCOPE for mouse genome
+SCOPE can be applied to whole genome scDNAseq of the mouse genome. 
+Specify argument `hgref = "mm10"` in `get_bam_bed()`, `get_mapp()`, 
+`get_gc()` and `get_coverage_scDNA()`. Calculation of GC content 
+and mappability needs to be modified from the default (hg19). 
+For mm10, there are two workarounds: 1) set all mappability to 1 
+to avoid extensive computation; 2) adopt QC procedures based on
+annotation results, e.g., filter out bins within black list regions, 
+which generally have low mappability. To be specific, we obtained
+and pre-stored mouse genome "blacklist" regions from 
+[Amemiya et al., Scientific Reports, 2019]
+(https://github.com/Boyle-Lab/Blacklist/tree/master/lists
+/mm10-blacklist.v2.bed.gz) 
+```{r, eval=FALSE}
+library(BSgenome.Mmusculus.UCSC.mm10)
+mapp <- get_mapp(ref_raw, hgref = "mm10")
+gc <- get_gc(ref_raw, hgref = "mm10")
+```
 
 
 # 3. Running SCOPE

@@ -4,7 +4,8 @@
 \alias{get_bam_bed}
 \title{Get bam file directories, sample names, and whole genomic bins}
 \usage{
-get_bam_bed(bamdir, sampname, hgref = "hg19", resolution = 500)
+get_bam_bed(bamdir, sampname, hgref = "hg19", resolution = 500, 
+            sex = FALSE)
 }
 \arguments{
 \item{bamdir}{vector of the directory of a bam file. Should be in the same
@@ -13,10 +14,14 @@ order as sample names in \code{sampname}.}
 \item{sampname}{vector of sample names. Should be in the same order as bam
 directories in \code{bamdir}.}
 
-\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
+\item{hgref}{reference genome. This should be 'hg19', 'hg38' or 'mm10'. 
+Default is human genome \code{hg19}.}
 
 \item{resolution}{numeric value of fixed bin-length. Default is \code{500}.
 Unit is "kb".}
+
+\item{sex}{logical, whether to include sex chromosomes. 
+Default is \code{FALSE}.}
 }
 \value{
 A list with components

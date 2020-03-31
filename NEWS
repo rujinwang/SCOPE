@@ -1,3 +1,6 @@
+Changes in version 0.99.13
++ Integrate mouse genome and update plot_iCN()
+
 Changes in version 0.99.12
 + add algorithms with shared clonal memberships
 

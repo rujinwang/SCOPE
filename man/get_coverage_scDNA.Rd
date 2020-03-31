@@ -14,7 +14,8 @@ get_coverage_scDNA(bambedObj, mapqthres, seq, hgref = "hg19")
 \item{seq}{the sequencing method to be used. This should be either
 'paired-end' or 'single-end'}
 
-\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
+\item{hgref}{reference genome. This should be 'hg19', 'hg38' or 'mm10'.
+Default is human genome \code{hg19}.}
 }
 \value{
 \item{Y}{Read depth matrix}

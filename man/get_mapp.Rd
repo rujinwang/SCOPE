@@ -9,7 +9,8 @@ get_mapp(ref, hgref = "hg19")
 \arguments{
 \item{ref}{GRanges object returned from \code{get_bam_bed}}
 
-\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
+\item{hgref}{reference genome. This should be 'hg19', 'hg38' or 'mm10'.
+Default is human genome \code{hg19}.}
 }
 \value{
 \item{mapp}{Vector of mappability for each bin/target}
@@ -23,7 +24,11 @@ reference genome from ENCODE is pre-saved. Compute the mean
 of mappability scores that overlapped reads map to bins,
 weighted by the width of mappability tracks on the genome
 reference. Use liftOver utility to calculate mappability
-for hg38, which is pre-saved as well.
+for hg38, which is pre-saved as well. For mm10, there are
+two workarounds: 1) set all mappability to 1 to avoid extensive
+computation; 2) adopt QC procedures based on annotation results, 
+e.g., filter out bins within black list regions, 
+which generally have low mappability.
 }
 \examples{
 \dontrun{

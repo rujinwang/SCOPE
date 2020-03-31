@@ -13,10 +13,15 @@ if (getRversion() >= "2.15.1") {
 #' of mappability scores that overlapped reads map to bins,
 #' weighted by the width of mappability tracks on the genome
 #' reference. Use liftOver utility to calculate mappability
-#' for hg38, which is pre-saved as well.
+#' for hg38, which is pre-saved as well. For mm10, there are
+#' two workarounds: 1) set all mappability to 1 to avoid extensive
+#' computation; 2) adopt QC procedures based on annotation results, 
+#' e.g., filter out bins within black list regions, 
+#' which generally have low mappability.
 #'
 #' @param ref GRanges object returned from \code{get_bam_bed}
-#' @param hgref reference genome. This should be either 'hg19' or 'hg38'.
+#' @param hgref reference genome. This should be 'hg19', 'hg38' or 'mm10'.
+#' Default is human genome \code{hg19}. 
 #'
 #' @return
 #'   \item{mapp}{Vector of mappability for each bin/target}
@@ -47,33 +52,35 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom S4Vectors queryHits subjectHits
 #' @export
 get_mapp <- function(ref, hgref = "hg19") {
-    if(!hgref %in% c("hg19", "hg38")){
-        stop("Reference genome should be either hg19 or hg38. ")
+    if(!hgref %in% c("hg19", "hg38", "mm10")){
+        stop("Reference genome should be hg19, hg38, or mm10.")
     }
     if(hgref == "hg19") {
         mapp_gref <- mapp_hg19
-    }else {
+    }else if(hgref == "hg38") {
         mapp_gref <- mapp_hg38
     }
     mapp <- rep(1, length(ref))
-    seqlevelsStyle(ref) <- "UCSC"
-    for (chr in as.character(unique(seqnames(ref)))) {
-        message("Getting mappability for ", chr, sep = "")
-        chr.index <- which(as.matrix(seqnames(ref)) == chr)
-        ref.chr <- ref[which(as.character(seqnames(ref)) == chr)]
-        mapp.chr <- rep(1, length(ref.chr))
-        overlap <- as.matrix(findOverlaps(ref.chr, mapp_gref))
-        for (i in unique(overlap[, 1])) {
-            index.temp <- overlap[which(overlap[, 1] == i), 2]
-            overlap.sub <- findOverlaps(ref.chr[i], mapp_gref[index.temp])
-            overlap.intersect <- pintersect(ref.chr[i][queryHits(
-                                overlap.sub)], mapp_gref[index.temp][
-                                subjectHits(overlap.sub)])
-            mapp.chr[i] <- sum((mapp_gref$score[index.temp]) * 
+    if(hgref != "mm10"){
+        seqlevelsStyle(ref) <- "UCSC"
+        for (chr in as.character(unique(seqnames(ref)))) {
+            message("Getting mappability for ", chr, sep = "")
+            chr.index <- which(as.matrix(seqnames(ref)) == chr)
+            ref.chr <- ref[which(as.character(seqnames(ref)) == chr)]
+            mapp.chr <- rep(1, length(ref.chr))
+            overlap <- as.matrix(findOverlaps(ref.chr, mapp_gref))
+            for (i in unique(overlap[, 1])) {
+                index.temp <- overlap[which(overlap[, 1] == i), 2]
+                overlap.sub <- findOverlaps(ref.chr[i], mapp_gref[index.temp])
+                overlap.intersect <- pintersect(ref.chr[i][queryHits(
+                    overlap.sub)], mapp_gref[index.temp][
+                    subjectHits(overlap.sub)])
+                mapp.chr[i] <- sum((mapp_gref$score[index.temp]) * 
                                 (width(overlap.intersect)))/sum(
                                 width(overlap.intersect))
+            }
+            mapp[chr.index] <- mapp.chr
         }
-        mapp[chr.index] <- mapp.chr
     }
     mapp
 }

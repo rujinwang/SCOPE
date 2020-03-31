@@ -8,7 +8,8 @@ if (getRversion() >= "2.15.1") {
 #' @description Compute GC content for each bin
 #'
 #' @param ref GRanges object returned from \code{get_bam_bed}
-#' @param hgref reference genome. This should be either 'hg19' or 'hg38'.
+#' @param hgref reference genome. This should be 'hg19', 'hg38' or 'mm10'.
+#' Default is human genome \code{hg19}. 
 #'
 #' @return
 #'   \item{gc}{Vector of GC content for each bin/target}
@@ -39,13 +40,15 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom Biostrings unmasked alphabetFrequency
 #' @export
 get_gc <- function (ref, hgref = "hg19"){
-    if(!hgref %in% c("hg19", "hg38")){
-        stop("Reference genome should be either hg19 or hg38. ")
+    if(!hgref %in% c("hg19", "hg38", "mm10")){
+        stop("Reference genome should be hg19, hg38, or mm10.")
     }
     if(hgref == "hg19") {
         genome <- BSgenome.Hsapiens.UCSC.hg19
     }else if(hgref == "hg38") {
         genome <- BSgenome.Hsapiens.UCSC.hg38
+    }else if(hgref == "mm10") {
+        genome <- BSgenome.Mmusculus.UCSC.mm10
     }
     gc <- rep(NA, length(ref))
     for (chr in unique(seqnames(ref))) {
@@ -63,8 +66,7 @@ get_gc <- function (ref, hgref = "hg19"){
             chrtemp <- as.numeric(mapSeqlevels(as.character(chr), "NCBI")[1])
         }
         if (length(chrtemp) == 0)
-            message("Chromosome cannot be found in NCBI
-                Homo sapiens database. ")
+            message("Chromosome cannot be found in NCBI database. ")
             chrm <- unmasked(genome[[chrtemp]])
             seqs <- Views(chrm, ref.chr)
             af <- alphabetFrequency(seqs, baseOnly = TRUE, as.prob = TRUE)

@@ -9,7 +9,8 @@ get_gc(ref, hgref = "hg19")
 \arguments{
 \item{ref}{GRanges object returned from \code{get_bam_bed}}
 
-\item{hgref}{reference genome. This should be either 'hg19' or 'hg38'.}
+\item{hgref}{reference genome. This should be 'hg19', 'hg38' or 'mm10'.
+Default is human genome \code{hg19}.}
 }
 \value{
 \item{gc}{Vector of GC content for each bin/target}
