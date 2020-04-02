@@ -75,9 +75,10 @@ get_bam_bed <- function(bamdir, sampname, hgref = "hg19", resolution = 500,
     if(sex) {
         ref <- bins[which(as.character(seqnames(bins)) %in% paste0("chr", 
                     c(seq_len(autochr), "X", "Y")))]
+    } else {
+        ref <- bins[which(as.character(seqnames(bins)) %in% paste0("chr", 
+                    seq_len(autochr)))]
     }
-    ref <- bins[which(as.character(seqnames(bins)) %in% paste0("chr", 
-                seq_len(autochr)))]
     if (!any(grepl("chr", seqlevels(ref)))) {
         seqlevels(ref) <- paste(c(seq_len(autochr), "X", "Y"), sep = "")
         ref <- sort(ref)
