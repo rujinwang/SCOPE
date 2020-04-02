@@ -5,7 +5,7 @@
 #'
 #' @usage
 #' plot_iCN(iCNmat, ref, Gini, annotation = NULL,
-#'         plot.dendrogram = TRUE, filename)
+#'         plot.dendrogram = TRUE, show.names = FALSE, filename)
 #' @param iCNmat inferred integer copy-number matrix by SCOPE,
 #' with each column being a cell and each row being a genomic bin
 #' @param ref GRanges object after quality control procedure
@@ -16,6 +16,8 @@
 #' Default is \code{NULL}.
 #' @param plot.dendrogram logical, whether to plot the dendrogram.
 #' Default is \code{TRUE}.
+#' @param show.names logical, whether to show cell names by y axis. 
+#' Default is \code{FALSE}. 
 #' @param filename name of the output png file
 #'
 #' @return png file with integer copy-number profiles across single cells
@@ -36,7 +38,7 @@
 #' @importFrom grDevices png dev.off
 #' @export
 plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
-    plot.dendrogram = TRUE, filename) {
+    plot.dendrogram = TRUE, show.names = FALSE, filename) {
     smart_image <- function(mat, ...) {
         image(t(mat[rev(seq(nrow(mat))), ]), ...)
     }
@@ -60,6 +62,11 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
                 # of cells in iCNmat must be the same")
         }
     }
+    if (show.names){
+        if (is.null(colnames(iCNmat))){
+            stop("Invalid plot object: cell names cannot be NULL")
+        }
+    }
     if (length(Gini) != ncol(iCNmat)) {
         stop("Invalid Gini object: length of Gini coefficient and
             # of cells in iCNmat must be the same")
@@ -68,43 +75,87 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
     # page setup
     if (is.null(annotation)) {
         if (plot.dendrogram) {
-            mm <- matrix(c(0, 0, 4, 0,
-                2, 3, 1, 5,
-                2, 3, 1, 0,
-                2, 3, 1, 6), nrow = 4, byrow = TRUE)
-            mh <- c(2, 20, 20, 20)
-            mh <- mh/sum(mh)
-            mw <- c(0.25, 0.1, 5, 0.5)
-            mw <- mw/sum(mw)
+            if (show.names) {
+                mm <- matrix(c(0, 0, 4, 0, 0,
+                            2, 3, 1, 7, 5,
+                            2, 3, 1, 7, 0,
+                            2, 3, 1, 7, 6), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 5, 0.2, 0.5)
+                mw <- mw/sum(mw) 
+            } else {
+                mm <- matrix(c(0, 0, 4, 0,
+                            2, 3, 1, 5,
+                            2, 3, 1, 0,
+                            2, 3, 1, 6), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 5, 0.5)
+                mw <- mw/sum(mw) 
+            }
         } else {
-            mm <- matrix(c(0, 0, 3, 0,
-                0, 2, 1, 4,
-                0, 2, 1, 0,
-                0, 2, 1, 5), nrow = 4, byrow = TRUE)
-            mh <- c(2, 20, 20, 20)
-            mh <- mh/sum(mh)
-            mw <- c(0.25, 0.1, 5, 0.5)
-            mw <- mw/sum(mw)
+            if (show.names) {
+                mm <- matrix(c(0, 0, 3, 0, 0,
+                            0, 2, 1, 6, 4,
+                            0, 2, 1, 6, 0,
+                            0, 2, 1, 6, 5), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 5, 0.2, 0.5)
+                mw <- mw/sum(mw)
+            } else {
+                mm <- matrix(c(0, 0, 3, 0,
+                            0, 2, 1, 4,
+                            0, 2, 1, 0,
+                            0, 2, 1, 5), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 5, 0.5)
+                mw <- mw/sum(mw)
+            }
         }
     } else {
         if (plot.dendrogram) {
-            mm <- matrix(c(0, 0, 0, 5, 0,
-                2, 3, 4, 1, 6,
-                2, 3, 4, 1, 7,
-                2, 3, 4, 1, 8), nrow = 4, byrow = TRUE)
-            mh <- c(2, 20, 20, 20)
-            mh <- mh/sum(mh)
-            mw <- c(0.25, 0.1, 0.1, 5, 0.5)
-            mw <- mw/sum(mw)
+            if (show.names) {
+                mm <- matrix(c(0, 0, 0, 5, 0, 0,
+                            2, 3, 4, 1, 9, 6,
+                            2, 3, 4, 1, 9, 7,
+                            2, 3, 4, 1, 9, 8), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 0.1, 5, 0.2, 0.5)
+                mw <- mw/sum(mw)
+            } else {
+                mm <- matrix(c(0, 0, 0, 5, 0,
+                            2, 3, 4, 1, 6,
+                            2, 3, 4, 1, 7,
+                            2, 3, 4, 1, 8), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 0.1, 5, 0.5)
+                mw <- mw/sum(mw)
+            }
         } else {
-            mm <- matrix(c(0, 0, 0, 4, 0,
-                0, 2, 3, 1, 5,
-                0, 2, 3, 1, 6,
-                0, 2, 3, 1, 7), nrow = 4, byrow = TRUE)
-            mh <- c(2, 20, 20, 20)
-            mh <- mh/sum(mh)
-            mw <- c(0.25, 0.1, 0.1, 5, 0.5)
-            mw <- mw/sum(mw)
+            if (show.names) {
+                mm <- matrix(c(0, 0, 0, 4, 0, 0,
+                            0, 2, 3, 1, 8, 5,
+                            0, 2, 3, 1, 8, 6,
+                            0, 2, 3, 1, 8, 7), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 0.1, 5, 0.2, 0.5)
+                mw <- mw/sum(mw)
+            } else {
+                mm <- matrix(c(0, 0, 0, 4, 0,
+                            0, 2, 3, 1, 5,
+                            0, 2, 3, 1, 6,
+                            0, 2, 3, 1, 7), nrow = 4, byrow = TRUE)
+                mh <- c(2, 20, 20, 20)
+                mh <- mh/sum(mh)
+                mw <- c(0.25, 0.1, 0.1, 5, 0.5)
+                mw <- mw/sum(mw)
+            }
         }
     }
     png(paste0(filename, ".png"), width = 2500,
@@ -217,6 +268,17 @@ plot_iCN <- function(iCNmat, ref, Gini, annotation = NULL,
         labels = c(0:7)[iCNtab + 1], col.ticks = "white", col = NA,
         lwd.ticks = 0, cex.axis = 1.5, las = 2, font = 2)
     title("integer CN", cex.main = 1.5)
+    
+    # 9) cell names
+    if (show.names) {
+        par(mar = rep(0, 4))
+        image(1, seq_len(ncol(iCNmat)), 
+            t(as.matrix(seq_len(ncol(iCNmat)))),
+            col = "white", xlab = "", ylab = "",
+            xaxt = "n", yaxt = "n", bty = "n")
+        text(1, rev(seq_len(ncol(iCNmat))), 
+            labels = colnames(iCNmat)[rclust$order], las = 2, cex = 1.5, font = 2)
+    }
     dev.off()
 }
 

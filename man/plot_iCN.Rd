@@ -5,7 +5,7 @@
 \title{Plot post-segmentation copy number profiles of integer values}
 \usage{
 plot_iCN(iCNmat, ref, Gini, annotation = NULL,
-        plot.dendrogram = TRUE, filename)
+        plot.dendrogram = TRUE, show.names = FALSE, filename)
 }
 \arguments{
 \item{iCNmat}{inferred integer copy-number matrix by SCOPE,
@@ -22,6 +22,9 @@ Default is \code{NULL}.}
 
 \item{plot.dendrogram}{logical, whether to plot the dendrogram.
 Default is \code{TRUE}.}
+
+\item{show.names}{logical, whether to show cell names by y axis. 
+Default is \code{FALSE}.}
 
 \item{filename}{name of the output png file}
 }

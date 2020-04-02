@@ -255,10 +255,8 @@ For mm10, there are two workarounds: 1) set all mappability to 1
 to avoid extensive computation; 2) adopt QC procedures based on
 annotation results, e.g., filter out bins within black list regions, 
 which generally have low mappability. To be specific, we obtained
-and pre-stored mouse genome "blacklist" regions from 
-[Amemiya et al., Scientific Reports, 2019]
-(https://github.com/Boyle-Lab/Blacklist/tree/master/lists
-/mm10-blacklist.v2.bed.gz) 
+and pre-stored mouse genome "blacklist" regions from
+[Amemiya et al., Scientific Reports, 2019](https://github.com/Boyle-Lab/Blacklist/tree/master/lists/mm10-blacklist.v2.bed.gz) 
 ```{r, eval=FALSE}
 library(BSgenome.Mmusculus.UCSC.mm10)
 mapp <- get_mapp(ref_raw, hgref = "mm10")
