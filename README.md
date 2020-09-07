@@ -33,7 +33,7 @@ Whole genome single-cell DNA sequencing (scDNA-seq) enables characterization of 
 
 
 ## Manuscript
-Rujin Wang, Danyu Lin, and Yuchao Jiang. SCOPE: A Normalization and Copy Number Estimation Method for Single-Cell DNA Sequencing. ***bioRxiv***, 2020. ([link](https://www.sciencedirect.com/science/article/abs/pii/S2405471220301113?via%3Dihub))
+Rujin Wang, Danyu Lin, and Yuchao Jiang. SCOPE: A Normalization and Copy Number Estimation Method for Single-Cell DNA Sequencing. ***Cell Systems***, 2020. ([link](https://www.sciencedirect.com/science/article/abs/pii/S2405471220301113?via%3Dihub))
 
 ## Vignettes
 [HTML](http://bioconductor.org/packages/devel/bioc/vignettes/SCOPE/inst/doc/SCOPE_vignette.html)
