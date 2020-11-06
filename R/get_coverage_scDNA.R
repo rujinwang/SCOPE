@@ -35,7 +35,7 @@
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import Rsamtools
 #' @importFrom GenomicRanges GRanges
-#' @importFrom IRanges IRanges RangesList Views countOverlaps
+#' @importFrom IRanges IRanges Views countOverlaps
 #' @importFrom GenomeInfoDb seqnames
 #' @export
 get_coverage_scDNA <- function(bambedObj, mapqthres, seq, hgref = "hg19") {

@@ -37,7 +37,7 @@
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @importFrom GenomicRanges GRanges
-#' @importFrom IRanges IRanges RangesList Views countOverlaps
+#' @importFrom IRanges IRanges Views countOverlaps
 #' @importFrom GenomeInfoDb seqnames
 #' @export
 segment_CBScs <- function(Y, Yhat, sampname, ref, chr, mode = "integer", 
