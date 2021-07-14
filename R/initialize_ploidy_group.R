@@ -59,7 +59,7 @@ initialize_ploidy_group <- function(Y, Yhat, ref, groups, maxPloidy = 6,
     normal <- (Y + 1)/(Yhat + 1)
     for (k in seq_len(ncol(Y))) {
         if (k%%5 == 1) {
-            cat(k, "\t")
+            cat("Initializing ploidy for cell ", k, "\t")
         }
     
         lr <- log(normal[, k])

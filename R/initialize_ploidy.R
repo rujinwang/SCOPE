@@ -57,7 +57,7 @@ initialize_ploidy <- function(Y, Yhat, ref, maxPloidy = 6,
 
     for (k in seq_len(ncol(Y))) {
         if (k%%5 == 1) {
-            cat(k, "\t")
+            cat("Initializing ploidy for cell ", k, "\t")
         }
 
         lr <- log(normal[, k])
