@@ -47,7 +47,7 @@ if (getRversion() >= "2.15.1") {
 #' @author Rujin Wang \email{rujin@email.unc.edu}
 #' @import utils
 #' @importFrom GenomicRanges GRanges pintersect
-#' @importFrom IRanges IRanges RangesList Views countOverlaps findOverlaps width
+#' @importFrom IRanges IRanges Views countOverlaps findOverlaps width
 #' @importFrom GenomeInfoDb mapSeqlevels seqlevelsStyle seqnames
 #' @importFrom S4Vectors queryHits subjectHits
 #' @export
