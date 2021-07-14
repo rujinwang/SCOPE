@@ -141,7 +141,7 @@ named consistently and be concordant with `.bam` files. SCOPE
 processes the entire genome altogether. Use function `get_bam_bed()` 
 to finish the pre-preparation step. By default, SCOPE is designed 
 for hg19 with fixed bin-length = 500kb. 
-```{r, eval=TRUE}
+```{r, eval=TRUE, message=FALSE}
 library(SCOPE)
 library(WGSmapp)
 library(BSgenome.Hsapiens.UCSC.hg38)
@@ -151,8 +151,6 @@ bamdir <- file.path(bamfolder, bamFile)
 sampname_raw <- sapply(strsplit(bamFile, ".", fixed = TRUE), "[", 1)
 bambedObj <- get_bam_bed(bamdir = bamdir, sampname = sampname_raw, 
                         hgref = "hg38")
-bamdir <- bambedObj$bamdir
-sampname_raw <- bambedObj$sampname
 ref_raw <- bambedObj$ref
 ```
 
@@ -168,13 +166,7 @@ and computed weighted average of the mappability
 scores if multiple ENCODE regions overlap with 
 the same bin. For SCOPE, the whole-genome mappability 
 track on human hg19 assembly is stored as part of the package. 
-```{r, eval=FALSE}
-mapp <- get_mapp(ref_raw)
-head(mapp)
-gc <- get_gc(ref_raw)
-values(ref_raw) <- cbind(values(ref_raw), DataFrame(gc, mapp))
-ref_raw
-```
+
 
 The whole-genome mappability track on human 
 hg38 assembly is also stored in SCOPE package. 
@@ -184,7 +176,7 @@ https://github.com/yuchaojiang/CODEX2/blob/master/README.md).
 Load the hg38 reference package, specify argument `hgref = "hg38"` 
 in `get_mapp()` and `get_gc()`. By default, `hg19` are used. 
 
-```{r, eval=TRUE}
+```{r, eval=TRUE, message=FALSE}
 mapp <- get_mapp(ref_raw, hgref = "hg38")
 head(mapp)
 gc <- get_gc(ref_raw, hgref = "hg38")
@@ -194,8 +186,23 @@ ref_raw
 
 Note that SCOPE can also be adapted to 
 the mouse genome (mm10) in a similar way 
-(see [CODEX2 for mouse genome](https://github.com/
-yuchaojiang/CODEX2/blob/master/README.md)). 
+(see [CODEX2 for mouse genome](https://github.com/yuchaojiang/CODEX2/blob/master/README.md)). 
+Specify argument `hgref = "mm10"` in `get_bam_bed()`, `get_mapp()`, 
+`get_gc()` and `get_coverage_scDNA()`. Calculation of GC content 
+and mappability needs to be modified from the default (hg19). 
+For mm10, there are two workarounds: 1) set all mappability to 1 
+to avoid extensive computation; 2) adopt QC procedures based on
+annotation results, e.g., filter out bins within "blacklist" regions, 
+which generally have low mappability. To be specific, we obtained
+and pre-stored mouse genome "blacklist" regions from
+[Amemiya et al., Scientific Reports, 2019](https://github.com/Boyle-Lab/Blacklist/tree/master/lists/mm10-blacklist.v2.bed.gz). 
+```{r, eval=FALSE}
+library(BSgenome.Mmusculus.UCSC.mm10)
+mapp <- get_mapp(ref_raw, hgref = "mm10")
+gc <- get_gc(ref_raw, hgref = "mm10")
+```
+
+
 For unknown reference assembly without 
 pre-calculated mappability track, 
 refer to [CODEX2: mappability pre-calculation](
@@ -210,7 +217,7 @@ to multiple genomic locations and to "blacklist"
 regions. This is followed by an additional step 
 of quality control to remove bins with extreme 
 mappability to avoid erroneous detections. 
-Specifically, "blacklist" bins, including 
+Specifically, the "blacklist" bins, including 
 [segmental duplication regions](http://humanparalogy.
 gs.washington.edu/build37/data/GRCh37GenomicSuperDup.tab) 
 and [gaps in reference assembly](https://gist.github.com/leipzig/6123703) 
@@ -246,22 +253,6 @@ ref <- qcObj$ref
 QCmetric <- qcObj$QCmetric
 ```
 
-## 2.5 SCOPE for mouse genome
-SCOPE can be applied to whole genome scDNAseq of the mouse genome. 
-Specify argument `hgref = "mm10"` in `get_bam_bed()`, `get_mapp()`, 
-`get_gc()` and `get_coverage_scDNA()`. Calculation of GC content 
-and mappability needs to be modified from the default (hg19). 
-For mm10, there are two workarounds: 1) set all mappability to 1 
-to avoid extensive computation; 2) adopt QC procedures based on
-annotation results, e.g., filter out bins within black list regions, 
-which generally have low mappability. To be specific, we obtained
-and pre-stored mouse genome "blacklist" regions from
-[Amemiya et al., Scientific Reports, 2019](https://github.com/Boyle-Lab/Blacklist/tree/master/lists/mm10-blacklist.v2.bed.gz) 
-```{r, eval=FALSE}
-library(BSgenome.Mmusculus.UCSC.mm10)
-mapp <- get_mapp(ref_raw, hgref = "mm10")
-gc <- get_gc(ref_raw, hgref = "mm10")
-```
 
 
 # 3. Running SCOPE
@@ -280,8 +271,6 @@ diploid/normal cells (for example,
 Gini less than 0.12). We demonstrate 
 the pre-stored toy dataset as follows. 
 ```{r, eval=TRUE, message=FALSE}
-library(SCOPE)
-# Load pre-stored toy data. 
 # get gini coefficient for each cell
 Gini <- get_gini(Y_sim)
 ```
@@ -293,26 +282,19 @@ or prior knowledge. SCOPE utilizes ploidy estimates from a
 first-pass normalization run to ensure fast convergence
 and to avoid local optima. Specify `SoS.plot = TRUE` in 
 `initialize_ploidy()` to visualize ploidy pre-estimations. 
-The normalization procedure is embeded an Expectation-Maximization 
-algorithm in the Poisson generalizaed linear model. Note that, 
+The normalization procedure includes an expectation-maximization 
+algorithm in the Poisson generalized linear model. Note that, 
 by setting `ploidyInt` in the normalization function, SCOPE allows 
 users to exploit prior-knowledge ploidies as the input and to 
-manually tune a few cells that have poor fitting. The final 
-selected optimal number of CNV group will be returned and then 
-perform normalization. 
+manually tune a few cells that have poor fitting. 
 ```{r, eval=TRUE, message=TRUE}
 # first-pass CODEX2 run with no latent factors
 normObj.sim <- normalize_codex2_ns_noK(Y_qc = Y_sim,
                                         gc_qc = ref_sim$gc,
                                         norm_index = which(Gini<=0.12))
 
-Yhat.noK.sim <- normObj.sim$Yhat
-beta.hat.noK.sim <- normObj.sim$beta.hat
-fGC.hat.noK.sim <- normObj.sim$fGC.hat
-N.sim <- normObj.sim$N
-
 # Ploidy initialization
-ploidy.sim <- initialize_ploidy(Y = Y_sim, Yhat = Yhat.noK.sim, ref = ref_sim)
+ploidy.sim <- initialize_ploidy(Y = Y_sim, Yhat = normObj.sim$Yhat, ref = ref_sim)
 
 # If using high performance clusters, parallel computing is 
 # easy and improves computational efficiency. Simply use 
@@ -321,7 +303,7 @@ ploidy.sim <- initialize_ploidy(Y = Y_sim, Yhat = Yhat.noK.sim, ref = ref_sim)
 normObj.scope.sim <- normalize_scope_foreach(Y_qc = Y_sim, gc_qc = ref_sim$gc,
     K = 1, ploidyInt = ploidy.sim,
     norm_index = which(Gini<=0.12), T = 1:5,
-    beta0 = beta.hat.noK.sim, nCores = 2)
+    beta0 = normObj.sim$beta.hat, nCores = 2)
 # normObj.scope.sim <- normalize_scope(Y_qc = Y_sim, gc_qc = ref_sim$gc,
 #     K = 1, ploidyInt = ploidy.sim,
 #     norm_index = which(Gini<=0.12), T = 1:5,
@@ -330,7 +312,16 @@ Yhat.sim <- normObj.scope.sim$Yhat[[which.max(normObj.scope.sim$BIC)]]
 fGC.hat.sim <- normObj.scope.sim$fGC.hat[[which.max(normObj.scope.sim$BIC)]]
 ```
 
-Upon completion of normalization and segmentation at a first pass, 
+Visualize selection results for each individual cell. 
+By default, BIC is used to choose optimal CNV group. 
+```{r, eval=FALSE}
+plot_EM_fit(Y_qc = Y_sim, gc_qc = ref_sim$gc, norm_index = which(Gini<=0.12), 
+            T = 1:5,
+            ploidyInt = ploidy.sim, beta0 = normObj.sim$beta.hat,
+            filename = "plot_EM_fit_demo.pdf")
+```
+
+Upon completion of SCOPE's default normalization and segmentation, 
 SCOPE includes the option to cluster cells based on the matrix of 
 normalized z-scores, estimated copy numbers, or estimated changepoints. 
 Given the inferred subclones, SCOPE can opt to perform a second round of 
@@ -354,15 +345,6 @@ Yhat.sim.group <- normObj.scope.sim.group$Yhat[[which.max(
                                     normObj.scope.sim.group$BIC)]]
 fGC.hat.sim.group <- normObj.scope.sim.group$fGC.hat[[which.max(
                                     normObj.scope.sim.group$BIC)]]
-```
-
-Visualize selection results for _j_-th cell. 
-By default, BIC is used to choose optimal CNV group. 
-```{r, eval=FALSE}
-plot_EM_fit(Y_qc = Y_sim, gc_qc = ref_sim$gc, norm_index = which(Gini<=0.12), 
-            T = 1:5,
-            ploidyInt = ploidy.sim, beta0 = beta.hat.noK.sim,
-            filename = "plot_EM_fit_demo.pdf")
 ```
 
 ## 3.3 Cross-sample segmentation by SCOPE
