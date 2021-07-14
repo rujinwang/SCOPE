@@ -117,13 +117,13 @@ get_masked_ref <- function(hgref){
         seg.dup <- seg.dup[!is.na(match(seg.dup[,1], 
                             paste('chr', c(seq_len(22), 'X', 'Y'), 
                             sep = ''))),]
-        seg.dup <- GRanges(seqnames = seg.dup[,1], 
+        seg.dup <- GRanges(seqnames = as.character(seg.dup[,1]), 
                             ranges = IRanges(start = seg.dup[,2], 
                             end = seg.dup[,3]))
         gaps <- gaps[!is.na(match(gaps[,2], 
                             paste('chr', c(seq_len(22), 'X', 'Y'), 
                             sep = ''))),]
-        gaps <- GRanges(seqnames = gaps[,2], 
+        gaps <- GRanges(seqnames = as.character(gaps[,2]), 
                             ranges = IRanges(start = gaps[,3], 
                             end = gaps[,4]))
         # Generate mask region
