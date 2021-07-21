@@ -13,7 +13,7 @@
 #' Gini <- get_gini(Y_sim)
 #'
 #' @author Rujin Wang \email{rujin@email.unc.edu}
-#' @import DescTools
+#' @importFrom DescTools AUC
 #' @export
 get_gini <- function(Y) {
     Gini <- rep(NA, ncol(Y))
