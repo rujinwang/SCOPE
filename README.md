@@ -7,7 +7,7 @@ Rujin Wang, Danyu Lin, and Yuchao Jiang
 
 
 ## Maintainer
-Rujin Wang <rujin@email.unc.edu>
+Rujin Wang <rujinwang1124@gmail.com>
 
 
 ## Installation
